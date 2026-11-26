@@ -8,7 +8,7 @@ window.PORTFOLIO_DATA = {
     fullName: "Angela María Lara Picón",
     displayName: "Angela Lara",
     initials: "AL",
-    role: "Desarrolladora Java Full Stack Jr. en formación",
+    role: "Desarrolladora Java Full Stack",
     location: "Bogotá, Colombia",
     summary:
       "Perfil orientado al desarrollo web y Java Full Stack, con enfoque en código claro, buenas prácticas y aprendizaje continuo.",
