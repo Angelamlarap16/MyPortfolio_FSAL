@@ -1,0 +1,361 @@
+/* ==========================================================================
+   Estilos base del portafolio profesional de Angela Lara
+   Identidad visual: grafito cálido, marfil, naranja suave y verde salvia
+   ========================================================================== */
+
+:root {
+  /* Paleta en modo oscuro por defecto */
+  --bg-primary: #171716;
+  --bg-surface: #201f1d;
+  --bg-elevated: #282623;
+  --text-primary: #f5f2eb;
+  --text-secondary: #c9c3b8;
+  --text-muted: #9b958a;
+  --accent-primary: #e07a5f;
+  --accent-primary-hover: #eb8c73;
+  --accent-secondary: #84a98c;
+  --border-subtle: rgba(245, 242, 235, 0.12);
+  --border-accent: rgba(224, 122, 95, 0.35);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.25);
+
+  /* Tipografías con respaldo del sistema */
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Espaciado y medidas */
+  --container-max: 1100px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --transition-fast: 180ms ease;
+}
+
+/* Modo claro opcional mediante atributo data-theme="light" */
+[data-theme="light"] {
+  --bg-primary: #f6f4ef;
+  --bg-surface: #ffffff;
+  --bg-elevated: #edeae2;
+  --text-primary: #1c1b19;
+  --text-secondary: #4a4742;
+  --text-muted: #6f6a62;
+  --accent-primary: #c85d41;
+  --accent-primary-hover: #b44f35;
+  --accent-secondary: #4f775b;
+  --border-subtle: rgba(28, 27, 25, 0.12);
+  --border-accent: rgba(200, 93, 65, 0.35);
+  --shadow-soft: 0 10px 26px rgba(28, 27, 25, 0.08);
+}
+
+/* Reinicio básico y modelo de caja */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: var(--accent-primary);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent-primary-hover);
+}
+
+/* Foco visible para navegación por teclado */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Enlace para saltar al contenido principal */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 1000;
+  padding: 0.65rem 1rem;
+  background-color: var(--accent-primary);
+  color: #171716;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Contenedor general */
+.container {
+  width: min(100% - 2rem, var(--container-max));
+  margin-inline: auto;
+}
+
+/* Encabezado y navegación */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(23, 23, 22, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+[data-theme="light"] .site-header {
+  background-color: rgba(246, 244, 239, 0.92);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 4.25rem;
+  flex-wrap: wrap;
+  padding-block: 0.5rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-accent);
+  background-color: var(--bg-surface);
+  color: var(--accent-primary);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+}
+
+.nav-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-list a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding-block: 0.25rem;
+}
+
+.nav-list a:hover {
+  color: var(--text-primary);
+}
+
+/* Secciones */
+.section {
+  padding-block: 4rem;
+  border-bottom: 1px solid var(--border-subtle);
+  scroll-margin-top: 4.5rem;
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  margin-top: 0;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  margin-bottom: 0.5rem;
+  padding-left: 0.85rem;
+  border-left: 3px solid var(--accent-secondary);
+}
+
+.section-subtitle {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+/* Portada */
+.hero-section {
+  padding-block: 5rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: var(--accent-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero-role {
+  margin: 0 0 1rem;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.hero-summary {
+  max-width: 62ch;
+  margin: 0 0 2rem;
+  color: var(--text-secondary);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+/* Botones */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.button-primary {
+  background-color: var(--accent-primary);
+  color: #171716;
+}
+
+.button-primary:hover {
+  background-color: var(--accent-primary-hover);
+  color: #171716;
+}
+
+.button-secondary {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+}
+
+.button-secondary:hover {
+  border-color: var(--accent-secondary);
+  color: var(--text-primary);
+}
+
+/* Lista de contacto base */
+.contact-list {
+  list-style: none;
+  margin: 0;
+  padding: 1.25rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.contact-label {
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-right: 0.4rem;
+}
+
+/* Pie de página */
+.site-footer {
+  padding-block: 2rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+}
+
+.footer-inner p {
+  margin: 0;
+}
+
+/* Respeto por preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* Alternativa imprimible para hoja de vida */
+@media print {
+  body {
+    background-color: #ffffff;
+    color: #111111;
+  }
+
+  .skip-link,
+  .site-header,
+  .hero-actions {
+    display: none;
+  }
+
+  .section {
+    padding-block: 1.25rem;
+    border-bottom: 1px solid #dddddd;
+  }
+
+  a {
+    color: #111111;
+    text-decoration: none;
+  }
+}
