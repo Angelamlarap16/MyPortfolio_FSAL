@@ -68,7 +68,9 @@ window.PORTFOLIO_DATA = {
       features: [
         "Crear tareas, cambiar estado, reasignar responsables, eliminar y conservar datos mediante localStorage."
       ],
-      pendingNote: "La base de datos y la conexión con backend se encuentran pendientes de implementación.",
+      nextSteps: [
+        "Implementación base de datos y conexión con backend (En proceso)."
+      ],
       technologiesLabel: "Tecnologías",
       technologies: ["HTML5", "CSS3", "JavaScript"],
       codeUrl: "https://github.com/Angelamlarap16/TaskPlanner_AL",

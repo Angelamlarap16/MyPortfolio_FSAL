@@ -189,27 +189,33 @@
       });
     }
 
-    if (!("IntersectionObserver" in window)) {
-      return;
-    }
+    sectionEntries.forEach(function (entry) {
+      entry.link.addEventListener("click", function () {
+        setActiveLink(entry.section.id);
+      });
+    });
+
+        if (!("IntersectionObserver" in window)) {
+          return;
+        }
 
     const observer = new IntersectionObserver(
-      function (entries) {
-        const visibleEntries = entries
-          .filter(function (entry) {
-            return entry.isIntersecting;
-          })
-          .sort(function (a, b) {
-            return b.intersectionRatio - a.intersectionRatio;
-          });
+          function (entries) {
+            const visibleEntries = entries
+              .filter(function (entry) {
+                return entry.isIntersecting;
+              })
+              .sort(function (a, b) {
+                return b.intersectionRatio - a.intersectionRatio;
+              });
 
-        if (visibleEntries.length > 0) {
-          setActiveLink(visibleEntries[0].target.id);
-        }
+            if (visibleEntries.length > 0) {
+              setActiveLink(visibleEntries[0].target.id);
+            }
       },
       {
         rootMargin: "-25% 0px -55% 0px",
-        threshold: [0.1, 0.35, 0.6]
+        threshold: [0.01, 0.1, 0.35, 0.6]
       }
     );
 
@@ -429,70 +435,309 @@
       if (project.contributions.length === 1) {
         contributionBox.appendChild(createEl("p", "", project.contributions[0]));
       } else {
-          const list = createEl("ul", "project-contribution-list");
-          project.contributions.slice(0, 3).forEach(function (item) {
-            list.appendChild(createEl("li", "", item));
-          });
-          contributionBox.appendChild(list);
-        }
+        const list = createEl("ul", "project-contribution-list");
+        project.contributions.slice(0, 3).forEach(function (item) {
+          list.appendChild(createEl("li", "", item));
+        });
+        contributionBox.appendChild(list);
+      }
 
       card.appendChild(contributionBox);
-      }
-
-      const techBlock = buildTechBlock(project);
-      if (techBlock) {
-        card.appendChild(techBlock);
-      }
-
-      const actions = createEl("div", "project-actions");
-      if (project.codeUrl) {
-        actions.appendChild(
-          buildExternalLink("Código", project.codeUrl, "button button-secondary button-sm")
-        );
-      }
-      if (project.demoUrl) {
-        actions.appendChild(
-          buildExternalLink("Ver demo", project.demoUrl, "button button-primary button-sm")
-        );
-      }
-
-      card.appendChild(actions);
-      return card;
     }
 
-    /**
-     * Renderiza las tarjetas de proyectos desde PORTFOLIO_DATA.
-     * @param {object|null} data
-     */
-    function renderProjects(data) {
-      const container = document.querySelector('[data-section-container="projects"]');
-      if (!container || !data || !Array.isArray(data.projects) || data.projects.length === 0) {
+    const techBlock = buildTechBlock(project);
+    if (techBlock) {
+      card.appendChild(techBlock);
+    }
+
+    const actions = createEl("div", "project-actions");
+    if (project.codeUrl) {
+      actions.appendChild(
+        buildExternalLink("Código", project.codeUrl, "button button-secondary button-sm")
+      );
+    }
+    if (project.demoUrl) {
+      actions.appendChild(
+        buildExternalLink("Ver demo", project.demoUrl, "button button-primary button-sm")
+      );
+    }
+
+    const detailButton = createEl("button", "button button-ghost button-sm", "Ver ficha completa");
+    detailButton.type = "button";
+    detailButton.setAttribute("aria-haspopup", "dialog");
+    detailButton.addEventListener("click", function () {
+      openProjectModal(project, detailButton);
+    });
+    actions.appendChild(detailButton);
+
+    card.appendChild(actions);
+    return card;
+  }
+
+  let activeModalTrigger = null;
+
+  /**
+   * Activa o desactiva la interacción del fondo mientras el modal está abierto.
+   * @param {boolean} isModalOpen
+   */
+  function setBackgroundInert(isModalOpen) {
+    const regions = document.querySelectorAll(".site-header, #contenido-principal, .site-footer");
+    regions.forEach(function (region) {
+      if (isModalOpen) {
+        region.setAttribute("aria-hidden", "true");
+        region.inert = true;
+      } else {
+        region.removeAttribute("aria-hidden");
+        region.inert = false;
+      }
+    });
+  }
+
+  /**
+   * Crea un apartado dentro del cuerpo del modal únicamente si hay datos disponibles.
+   * @param {string} title
+   * @param {string|string[]} content
+   * @returns {HTMLElement|null}
+   */
+  function buildModalSection(title, content) {
+    if (!content || (Array.isArray(content) && content.length === 0)) {
+      return null;
+    }
+
+    const section = createEl("section", "modal-section");
+    section.appendChild(createEl("h4", "modal-section-title", title));
+
+    if (Array.isArray(content)) {
+      const list = createEl("ul", "modal-section-list");
+      content.forEach(function (item) {
+        list.appendChild(createEl("li", "", item));
+      });
+      section.appendChild(list);
+    } else {
+      section.appendChild(createEl("p", "", content));
+    }
+
+    return section;
+  }
+
+  /**
+   * Abre el modal accesible con la información disponible del proyecto.
+   * @param {object} project
+   * @param {HTMLElement} triggerElement
+   */
+  function openProjectModal(project, triggerElement) {
+    const modal = document.getElementById("project-modal");
+    const metaEl = document.getElementById("modal-project-meta");
+    const titleEl = document.getElementById("modal-project-title");
+    const bodyEl = document.getElementById("modal-project-body");
+    const actionsEl = document.getElementById("modal-project-actions");
+    const closeButton = document.getElementById("modal-close");
+
+    if (!modal || !metaEl || !titleEl || !bodyEl || !actionsEl || !closeButton) {
+      return;
+    }
+
+    activeModalTrigger = triggerElement || document.activeElement;
+
+    metaEl.innerHTML = "";
+    if (project.type) {
+      metaEl.appendChild(createEl("span", "tag", project.type));
+    }
+    if (project.status) {
+      metaEl.appendChild(createEl("span", "tag tag-sage", project.status));
+    }
+
+    titleEl.textContent = project.name || "Ficha de proyecto";
+    bodyEl.innerHTML = "";
+    bodyEl.scrollTop = 0;
+
+    const purposeSection = buildModalSection("Propósito", project.purpose || project.description);
+    if (purposeSection) {
+      bodyEl.appendChild(purposeSection);
+    }
+
+    const problemSection = buildModalSection("Problema que aborda", project.problem);
+    if (problemSection) {
+      bodyEl.appendChild(problemSection);
+    }
+
+    const contributionSection = buildModalSection("Mi contribución", project.contributions);
+    if (contributionSection) {
+      bodyEl.appendChild(contributionSection);
+    }
+
+    const techBlock = buildTechBlock(project);
+    if (techBlock) {
+      const techSection = createEl("section", "modal-section");
+      techSection.appendChild(
+        createEl("h4", "modal-section-title", project.technologiesLabel || "Tecnologías")
+      );
+      const list = techBlock.querySelector(".project-tech-list");
+      if (list) {
+        techSection.appendChild(list);
+      }
+      bodyEl.appendChild(techSection);
+    }
+
+    const featuresSection = buildModalSection("Funcionalidades", project.features);
+    if (featuresSection) {
+      bodyEl.appendChild(featuresSection);
+    }
+
+    const challengesSection = buildModalSection(
+      "Desafíos y soluciones documentados",
+      project.challenges
+    );
+    if (challengesSection) {
+      bodyEl.appendChild(challengesSection);
+    }
+
+    const statusSection = buildModalSection("Estado", project.status);
+    if (statusSection) {
+      bodyEl.appendChild(statusSection);
+    }
+
+    const nextStepsSection = buildModalSection("Próximos pasos conocidos", project.nextSteps);
+    if (nextStepsSection) {
+      bodyEl.appendChild(nextStepsSection);
+    }
+
+    actionsEl.innerHTML = "";
+    if (project.demoUrl) {
+      actionsEl.appendChild(
+        buildExternalLink("Ver demo", project.demoUrl, "button button-primary button-sm")
+      );
+    }
+    if (project.codeUrl) {
+      actionsEl.appendChild(
+        buildExternalLink(
+          "Código en GitHub",
+          project.codeUrl,
+          project.demoUrl ? "button button-secondary button-sm" : "button button-primary button-sm"
+        )
+      );
+    }
+
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+    setBackgroundInert(true);
+
+    window.requestAnimationFrame(function () {
+      closeButton.focus();
+    });
+  }
+
+  /**
+   * Cierra el modal y devuelve el foco al botón que lo abrió.
+   */
+  function closeProjectModal() {
+    const modal = document.getElementById("project-modal");
+    if (!modal || modal.hidden) {
+      return;
+    }
+
+    modal.hidden = true;
+    document.body.classList.remove("modal-open");
+    setBackgroundInert(false);
+
+    if (activeModalTrigger && typeof activeModalTrigger.focus === "function") {
+      activeModalTrigger.focus();
+    }
+    activeModalTrigger = null;
+  }
+
+  /**
+   * Inicializa los eventos de cierre y contención de foco del modal.
+   */
+  function initProjectModal() {
+    const modal = document.getElementById("project-modal");
+    const closeButton = document.getElementById("modal-close");
+
+    if (!modal || !closeButton) {
+      return;
+    }
+
+    closeButton.addEventListener("click", closeProjectModal);
+
+    modal.addEventListener("click", function (event) {
+      if (event.target === modal) {
+        closeProjectModal();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (modal.hidden) {
         return;
       }
 
-      container.innerHTML = "";
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeProjectModal();
+        return;
+      }
 
-      const grid = createEl("div", "projects-grid");
+      if (event.key === "Tab") {
+        const focusable = Array.from(
+          modal.querySelectorAll(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter(function (el) {
+          return !el.hidden && el.offsetParent !== null;
+        });
 
-      data.projects.forEach(function (project) {
-        grid.appendChild(buildProjectCard(project));
-      });
+        if (focusable.length === 0) {
+          event.preventDefault();
+          return;
+        }
 
-      container.appendChild(grid);
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    });
+  }
+
+  /**
+   * Renderiza las tarjetas de proyectos desde PORTFOLIO_DATA.
+   * @param {object|null} data
+   */
+  function renderProjects(data) {
+    const container = document.querySelector('[data-section-container="projects"]');
+    if (!container || !data || !Array.isArray(data.projects) || data.projects.length === 0) {
+      return;
     }
 
-    /**
-     * Punto de entrada para inicializar la interfaz del portafolio.
-     */
-    function initPortfolio() {
-      initThemeToggle();
-      initMobileMenu();
-      initActiveSectionIndicator();
+    container.innerHTML = "";
 
-      const data = getPortfolioData();
-      initHeroMedia(data);
-      renderProjects(data);
-    }
+    const grid = createEl("div", "projects-grid");
 
-    document.addEventListener("DOMContentLoaded", initPortfolio);
-  }) ();
+    data.projects.forEach(function (project) {
+      grid.appendChild(buildProjectCard(project));
+    });
+
+    container.appendChild(grid);
+  }
+
+  /**
+   * Punto de entrada para inicializar la interfaz del portafolio.
+   */
+  function initPortfolio() {
+    initThemeToggle();
+    initMobileMenu();
+    initActiveSectionIndicator();
+    initProjectModal();
+
+    const data = getPortfolioData();
+    initHeroMedia(data);
+    renderProjects(data);
+  }
+
+  document.addEventListener("DOMContentLoaded", initPortfolio);
+})();

@@ -800,6 +800,123 @@ h3 {
   border-top: 1px solid var(--border-neutral);
 }
 
+.noscript-projects {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+/* ==========================================================================
+   Modal accesible de ficha de proyecto
+   ========================================================================== */
+body.modal-open {
+  overflow: hidden;
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: grid;
+  place-items: center;
+  padding: var(--space-md);
+  background-color: rgba(12, 15, 13, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+[data-theme="light"] .modal-backdrop {
+  background-color: rgba(32, 42, 35, 0.45);
+}
+
+.modal-dialog {
+  width: min(100%, 680px);
+  max-height: min(88vh, 760px);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-neutral);
+  background-color: var(--bg-elevated);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--border-neutral);
+}
+
+.modal-header-info {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.modal-title {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+}
+
+.modal-close {
+  flex-shrink: 0;
+}
+
+.modal-body {
+  padding: var(--space-lg);
+  overflow-y: auto;
+  display: grid;
+  gap: var(--space-md);
+}
+
+.modal-section {
+  padding: var(--space-md);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-neutral);
+}
+
+.modal-section-title {
+  margin: 0 0 0.45rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-secondary);
+}
+
+.modal-section p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.94rem;
+}
+
+.modal-section-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--text-secondary);
+  font-size: 0.94rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--border-neutral);
+  background-color: var(--bg-card);
+}
+
+.modal-footer:empty {
+  display: none;
+}
+
 /* Lista de contacto base */
 .contact-list {
   list-style: none;

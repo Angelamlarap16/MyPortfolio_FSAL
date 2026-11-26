@@ -142,9 +142,64 @@
         </div>
         <div class="section-body" data-section-container="projects">
           <noscript>
-            <p>Activa JavaScript para visualizar el detalle de los proyectos o visita <a
-                href="https://github.com/Angelamlarap16" target="_blank"
-                rel="noopener noreferrer">github.com/Angelamlarap16</a>.</p>
+            <div class="noscript-projects">
+              <article class="card">
+                <h3>TMV — Tu Mayorista Virtual</h3>
+                <p><strong>Tipo:</strong> Colaborativo · <strong>Estado:</strong> Frontend desplegado</p>
+                <p>Aplicación web de comercio mayorista orientada a facilitar la consulta de productos y la preparación
+                  de pedidos para pequeños negocios.</p>
+                <p><strong>Mi contribución:</strong> Desarrollo de “Quiénes somos” y “Qué ofrecemos”, lógica del resumen
+                  de compra, participación en integración entre frontend y backend, participación en lógica de datos de
+                  productos, y organización y seguimiento con Scrum.</p>
+                <p><strong>Tecnologías del proyecto (equipo):</strong> HTML5, CSS3, JavaScript, Java, Spring Boot,
+                  MySQL.</p>
+                <p>
+                  <a href="https://github.com/NightwingJP/TMV-Project" target="_blank"
+                    rel="noopener noreferrer">Código</a> ·
+                  <a href="https://nightwingjp.github.io/TMV-Project/frontend/index.html" target="_blank"
+                    rel="noopener noreferrer">Ver demo</a>
+                </p>
+              </article>
+
+              <article class="card">
+                <h3>Pet Task Planner</h3>
+                <p><strong>Tipo:</strong> Personal · <strong>Estado:</strong> En desarrollo y mejora</p>
+                <p>Aplicación web para organizar actividades de cuidado de mascotas mediante un tablero con
+                  responsables, categorías, prioridades y fechas límite.</p>
+                <p><strong>Mi contribución:</strong> Desarrollo del formulario, validaciones, gestión de tareas y
+                  persistencia local.</p>
+                <p><strong>Funcionalidades:</strong> Crear tareas, cambiar estado, reasignar responsables, eliminar y
+                  conservar datos mediante localStorage.</p>
+                <p><strong>Tecnologías:</strong> HTML5, CSS3, JavaScript.</p>
+                <p><strong>Próximos pasos conocidos:</strong> Base de datos y conexión con backend pendientes de
+                  implementación.</p>
+                <p><a href="https://github.com/Angelamlarap16/TaskPlanner_AL" target="_blank"
+                    rel="noopener noreferrer">Código</a></p>
+              </article>
+
+              <article class="card">
+                <h3>Agenda Telefónica MVC</h3>
+                <p><strong>Tipo:</strong> Proyecto de hackathon · <strong>Estado:</strong> Prototipo implementado,
+                  documentación en proceso</p>
+                <p>Aplicación de escritorio para registrar, buscar, modificar y eliminar contactos telefónicos.</p>
+                <p><strong>Funcionalidades:</strong> Patrón Modelo-Vista-Controlador, validaciones de nombres y
+                  teléfonos, detección de duplicados, control de capacidad, listado alfabético y selección desde una
+                  tabla.</p>
+                <p><a href="https://github.com/Angelamlarap16/Hackathon2_Telephone" target="_blank"
+                    rel="noopener noreferrer">Código</a></p>
+              </article>
+
+              <article class="card">
+                <h3>QA con Jest</h3>
+                <p><strong>Tipo:</strong> Práctica técnica · <strong>Estado:</strong> Código y pruebas implementados</p>
+                <p>Laboratorio de pruebas unitarias para verificar funciones en JavaScript y comprobar casos límite.</p>
+                <p><strong>Funcionalidades:</strong> Pruebas de operaciones matemáticas, enteros y decimales, manejo de
+                  división por cero mediante una excepción y prueba de ese comportamiento.</p>
+                <p><strong>Tecnologías:</strong> JavaScript, Jest.</p>
+                <p><a href="https://github.com/Angelamlarap16/Testing-DebugginCode_AL" target="_blank"
+                    rel="noopener noreferrer">Código</a></p>
+              </article>
+            </div>
           </noscript>
         </div>
       </div>
@@ -238,6 +293,30 @@
       <p class="footer-note">Desarrolladora Java Full Stack</p>
     </div>
   </footer>
+
+  <!-- Modal accesible para ficha completa de proyecto -->
+  <div class="modal-backdrop" id="project-modal" role="dialog" aria-modal="true" aria-labelledby="modal-project-title"
+    hidden>
+    <div class="modal-dialog card-elevated" role="document">
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <div class="project-meta" id="modal-project-meta"></div>
+          <h3 class="modal-title" id="modal-project-title"></h3>
+        </div>
+        <button type="button" class="icon-button modal-close" id="modal-close" aria-label="Cerrar ficha del proyecto">
+          <span aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round">
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+            </svg>
+          </span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-project-body"></div>
+      <div class="modal-footer" id="modal-project-actions"></div>
+    </div>
+  </div>
 </body>
 
 </html>
