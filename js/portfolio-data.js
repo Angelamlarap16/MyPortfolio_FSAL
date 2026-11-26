@@ -11,13 +11,13 @@ window.PORTFOLIO_DATA = {
     role: "Desarrolladora Java Full Stack",
     location: "Bogotá, Colombia",
     summary:
-      "Perfil orientado al desarrollo web y Java Full Stack, con enfoque en código claro, buenas prácticas y aprendizaje continuo.",
+    "Desarrollo proyectos web con HTML, CSS, JavaScript, Java, Spring Boot y MySQL durante mi formación en Generation. Aporto experiencia profesional en revisión de calidad, documentación y trabajo colaborativo, con especial interés en el desarrollo web responsivo.",
     languages: [
       { name: "Español", level: "Nativo" },
       { name: "Inglés", level: "B1" }
     ],
-    // Ruta prevista para la fotografía de portada; su ausencia se gestiona en la interfaz
-    heroImage: "img/angela-hero.jpg"
+    // Fotografía desactivada temporalmente para mostrar la composición tipográfica AL en portada
+    heroImage: ""
   },
 
   contact: {
