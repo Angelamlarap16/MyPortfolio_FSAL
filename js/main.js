@@ -925,6 +925,400 @@
   }
 
   /**
+   * Devuelve iconos SVG discretos para los botones de contacto.
+   * @param {string} iconKey
+   * @returns {string}
+   */
+  function getContactIconSvg(iconKey) {
+    const icons = {
+      email:
+        '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
+      phone:
+        '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+      github:
+        '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>',
+      linkedin:
+        '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><line x1="7" y1="10" x2="7" y2="17"/><line x1="7" y1="7" x2="7" y2="7.01"/><path d="M11 17v-4a3 3 0 0 1 6 0v4"/><line x1="11" y1="10" x2="11" y2="17"/></svg>'
+    };
+    return icons[iconKey] || "";
+  }
+
+  /**
+   * Construye un botón de contacto con icono, etiqueta y dato visible.
+   * @param {object} config
+   * @returns {HTMLAnchorElement}
+   */
+  function buildContactButton(config) {
+    const link = createEl(
+      "a",
+      config.primary ? "contact-button contact-button-primary" : "contact-button"
+    );
+    link.href = config.href;
+    if (config.external) {
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+    }
+
+    const iconWrap = createEl("span", "contact-button-icon");
+    iconWrap.setAttribute("aria-hidden", "true");
+    iconWrap.innerHTML = getContactIconSvg(config.icon);
+
+    const textWrap = createEl("span", "contact-button-text");
+    textWrap.appendChild(createEl("span", "contact-button-label", config.label));
+    textWrap.appendChild(createEl("span", "contact-button-value", config.value));
+
+    link.appendChild(iconWrap);
+    link.appendChild(textWrap);
+    return link;
+  }
+
+  /**
+   * Renderiza la sección CONTÁCTAME con los cuatro canales y la acción de CV.
+   * @param {object|null} data
+   */
+  function renderContact(data) {
+    const container = document.querySelector('[data-section-container="contact"]');
+    const contact = data && data.contact;
+    if (!container || !contact) {
+      return;
+    }
+
+    container.innerHTML = "";
+    const layout = createEl("div", "contact-layout");
+    const grid = createEl("div", "contact-grid");
+
+    const subject = encodeURIComponent(
+      contact.emailSubject || "Contacto profesional — Desarrollo Java Full Stack"
+    );
+    const cleanPhone = String(contact.phone || "").replace(/\s+/g, "");
+
+    const items = [
+      {
+        label: "Correo",
+        value: contact.email,
+        href: "mailto:" + contact.email + "?subject=" + subject,
+        icon: "email",
+        primary: true,
+        external: false
+      },
+      {
+        label: "Teléfono",
+        value: contact.phone,
+        href: "tel:" + cleanPhone,
+        icon: "phone",
+        primary: false,
+        external: false
+      },
+      {
+        label: "GitHub",
+        value: contact.githubHandle || "@Angelamlarap16",
+        href: contact.github,
+        icon: "github",
+        primary: false,
+        external: true
+      },
+      {
+        label: "LinkedIn",
+        value: contact.linkedinLabel || "Angela Lara",
+        href: contact.linkedin,
+        icon: "linkedin",
+        primary: false,
+        external: true
+      }
+    ];
+
+    items.forEach(function (item) {
+      if (item.value && item.href) {
+        grid.appendChild(buildContactButton(item));
+      }
+    });
+
+    layout.appendChild(grid);
+
+    const cvConfig = (data && data.cv) || {};
+    const cvPanel = createEl("div", "card contact-cv-panel");
+    const cvCopy = createEl("div", "contact-cv-copy");
+    cvCopy.appendChild(createEl("h3", "", "Hoja de vida orientada a desarrollo"));
+    cvCopy.appendChild(
+      createEl(
+        "p",
+        "",
+        "Consulta el resumen técnico con perfil, proyectos, habilidades, experiencia y formación listo para imprimir o guardar en PDF."
+      )
+    );
+
+    const cvActions = createEl("div", "contact-cv-actions");
+    const printBtn = createEl(
+      "button",
+      "button button-secondary button-sm",
+      cvConfig.printLabel || "Imprimir / Guardar PDF"
+    );
+    printBtn.type = "button";
+    printBtn.addEventListener("click", function () {
+      window.print();
+    });
+    cvActions.appendChild(printBtn);
+
+    if (cvConfig.pdfUrl) {
+      const pdfLink = createEl(
+        "a",
+        "button button-primary button-sm",
+        cvConfig.pdfLabel || "Abrir CV en PDF"
+      );
+      pdfLink.href = cvConfig.pdfUrl;
+      pdfLink.target = "_blank";
+      pdfLink.rel = "noopener noreferrer";
+      pdfLink.setAttribute(
+        "aria-label",
+        (cvConfig.pdfLabel || "Abrir CV en PDF") + " (se abre en una nueva pestaña)"
+      );
+      cvActions.appendChild(pdfLink);
+    }
+
+    cvPanel.appendChild(cvCopy);
+    cvPanel.appendChild(cvActions);
+    layout.appendChild(cvPanel);
+
+    container.appendChild(layout);
+  }
+
+  /**
+   * Conecta los botones de CV del encabezado y la portada con el PDF o la versión imprimible.
+   * @param {object|null} data
+   */
+  function initCvActions(data) {
+    const cvConfig = (data && data.cv) || {};
+    const pdfUrl = typeof cvConfig.pdfUrl === "string" ? cvConfig.pdfUrl.trim() : "";
+    const targets = [
+      document.getElementById("header-cv-action"),
+      document.getElementById("hero-cv-action")
+    ].filter(Boolean);
+
+    targets.forEach(function (element) {
+      if (pdfUrl) {
+        element.setAttribute("href", pdfUrl);
+        element.setAttribute("target", "_blank");
+        element.setAttribute("rel", "noopener noreferrer");
+        element.setAttribute(
+          "aria-label",
+          (cvConfig.pdfLabel || "Abrir CV en PDF") + " (se abre en una nueva pestaña)"
+        );
+        element.setAttribute("title", "Abrir CV en PDF");
+      } else {
+        element.setAttribute("aria-label", "Imprimir o guardar CV en PDF");
+        element.setAttribute("title", "Imprimir o guardar CV en PDF");
+        element.addEventListener("click", function (event) {
+          event.preventDefault();
+          window.print();
+        });
+      }
+    });
+  }
+
+  /**
+   * Construye la versión imprimible del CV usando exclusivamente los datos del sitio.
+   * @param {object|null} data
+   */
+  function renderPrintableCv(data) {
+    const container = document.getElementById("cv-imprimible");
+    if (!container || !data) {
+      return;
+    }
+
+    const profile = data.profile || {};
+    const contact = data.contact || {};
+    const about = data.about || {};
+    const skills = Array.isArray(data.skills) ? data.skills : [];
+    const projects = Array.isArray(data.projects) ? data.projects : [];
+    const experience = data.experience || {};
+    const education = data.education || {};
+
+    container.innerHTML = "";
+
+    const header = createEl("header", "cv-header");
+    header.appendChild(createEl("h1", "cv-name", profile.fullName || "Angela María Lara Picón"));
+    header.appendChild(createEl("p", "cv-role", profile.role || "Desarrolladora Java Full Stack"));
+
+    const contactRow = createEl("ul", "cv-contact-row");
+    [
+      contact.location,
+      contact.email,
+      contact.phone,
+      contact.github ? "GitHub: " + contact.github.replace("https://", "") : "",
+      contact.linkedin ? "LinkedIn: " + contact.linkedin.replace("https://www.", "") : ""
+    ]
+      .filter(Boolean)
+      .forEach(function (text) {
+        contactRow.appendChild(createEl("li", "", text));
+      });
+    header.appendChild(contactRow);
+    container.appendChild(header);
+
+    if (Array.isArray(about.paragraphs) && about.paragraphs.length > 0) {
+      const profileSection = createEl("section", "cv-section");
+      profileSection.appendChild(createEl("h2", "cv-section-title", "Perfil"));
+      about.paragraphs.forEach(function (text) {
+        profileSection.appendChild(createEl("p", "", text));
+      });
+      container.appendChild(profileSection);
+    }
+
+    if (skills.length > 0) {
+      const skillsSection = createEl("section", "cv-section");
+      skillsSection.appendChild(createEl("h2", "cv-section-title", "Habilidades"));
+      skills.forEach(function (group) {
+        if (!Array.isArray(group.items) || group.items.length === 0) {
+          return;
+        }
+        const suffix = group.contextTag ? " (" + group.contextTag + ")" : "";
+        const line = createEl("p", "");
+        const strong = createEl("strong", "", group.category + suffix + ": ");
+        line.appendChild(strong);
+        line.appendChild(document.createTextNode(group.items.join(", ") + "."));
+        skillsSection.appendChild(line);
+      });
+      container.appendChild(skillsSection);
+    }
+
+    if (projects.length > 0) {
+      const projectsSection = createEl("section", "cv-section");
+      projectsSection.appendChild(createEl("h2", "cv-section-title", "Proyectos y contribuciones"));
+      projects.forEach(function (project) {
+        const item = createEl("div", "cv-item");
+        item.appendChild(createEl("p", "cv-item-title", project.name));
+        item.appendChild(
+          createEl("p", "cv-item-meta", [project.type, project.status].filter(Boolean).join(" · "))
+        );
+        item.appendChild(createEl("p", "", project.description));
+
+        const list = createEl("ul", "cv-list");
+        if (Array.isArray(project.contributions)) {
+          project.contributions.forEach(function (entry) {
+            list.appendChild(createEl("li", "", entry));
+          });
+        }
+        if (Array.isArray(project.features)) {
+          project.features.forEach(function (entry) {
+            list.appendChild(createEl("li", "", entry));
+          });
+        }
+        if (Array.isArray(project.nextSteps)) {
+          project.nextSteps.forEach(function (entry) {
+            list.appendChild(createEl("li", "", entry));
+          });
+        }
+        if (list.children.length > 0) {
+          item.appendChild(list);
+        }
+
+        if (Array.isArray(project.technologies) && project.technologies.length > 0) {
+          item.appendChild(
+            createEl(
+              "p",
+              "cv-item-meta",
+              (project.technologiesLabel || "Tecnologías") + ": " + project.technologies.join(", ")
+            )
+          );
+        }
+
+        const linksText = [project.codeUrl, project.demoUrl].filter(Boolean).join(" | ");
+        if (linksText) {
+          item.appendChild(createEl("p", "cv-item-meta", linksText));
+        }
+
+        projectsSection.appendChild(item);
+      });
+      container.appendChild(projectsSection);
+    }
+
+    const workItems = Array.isArray(experience.work) ? experience.work : [];
+    const trainingItems = Array.isArray(experience.trainingProjects)
+      ? experience.trainingProjects
+      : [];
+    if (workItems.length > 0 || trainingItems.length > 0) {
+      const expSection = createEl("section", "cv-section");
+      expSection.appendChild(createEl("h2", "cv-section-title", "Experiencia"));
+
+      workItems.forEach(function (entry) {
+        const item = createEl("div", "cv-item");
+        item.appendChild(createEl("p", "cv-item-title", entry.role + " — " + entry.organization));
+        item.appendChild(
+          createEl(
+            "p",
+            "cv-item-meta",
+            [entry.contextTag, entry.modality, entry.period].filter(Boolean).join(" · ")
+          )
+        );
+        if (Array.isArray(entry.tasks) && entry.tasks.length > 0) {
+          const list = createEl("ul", "cv-list");
+          entry.tasks.forEach(function (task) {
+            list.appendChild(createEl("li", "", task));
+          });
+          item.appendChild(list);
+        }
+        expSection.appendChild(item);
+      });
+
+      trainingItems.forEach(function (entry) {
+        const item = createEl("div", "cv-item");
+        item.appendChild(createEl("p", "cv-item-title", entry.role + " — " + entry.organization));
+        item.appendChild(
+          createEl(
+            "p",
+            "cv-item-meta",
+            [entry.contextTag, entry.period].filter(Boolean).join(" · ")
+          )
+        );
+        if (Array.isArray(entry.highlights) && entry.highlights.length > 0) {
+          const list = createEl("ul", "cv-list");
+          entry.highlights.forEach(function (highlight) {
+            list.appendChild(createEl("li", "", highlight));
+          });
+          item.appendChild(list);
+        }
+        expSection.appendChild(item);
+      });
+
+      container.appendChild(expSection);
+    }
+
+    const primaryEdu = Array.isArray(education.primary) ? education.primary : [];
+    const compEdu = Array.isArray(education.complementary) ? education.complementary : [];
+    const languages = Array.isArray(profile.languages) ? profile.languages : [];
+
+    if (primaryEdu.length > 0 || compEdu.length > 0 || languages.length > 0) {
+      const eduSection = createEl("section", "cv-section");
+      eduSection.appendChild(createEl("h2", "cv-section-title", "Formación e idiomas"));
+
+      primaryEdu.concat(compEdu).forEach(function (entry) {
+        const details = [entry.program, entry.institution, entry.period].filter(Boolean).join(" — ");
+        eduSection.appendChild(createEl("p", "", details));
+      });
+
+      if (languages.length > 0) {
+        const langText = languages
+          .map(function (lang) {
+            return lang.name + " (" + lang.level + ")";
+          })
+          .join(", ");
+        eduSection.appendChild(createEl("p", "", "Idiomas: " + langText + "."));
+      }
+
+      container.appendChild(eduSection);
+    }
+  }
+
+  /**
+   * Actualiza el año mostrado en el pie de página.
+   */
+  function initFooterYear() {
+    const yearEl = document.getElementById("footer-year");
+    if (yearEl) {
+      yearEl.textContent = String(new Date().getFullYear());
+    }
+  }
+
+  /**
    * Punto de entrada para inicializar la interfaz del portafolio.
    */
   function initPortfolio() {
@@ -932,6 +1326,7 @@
     initMobileMenu();
     initActiveSectionIndicator();
     initProjectModal();
+    initFooterYear();
 
     const data = getPortfolioData();
     initHeroMedia(data);
@@ -940,6 +1335,9 @@
     renderExperience(data);
     renderSkills(data);
     renderEducation(data);
+    renderContact(data);
+    initCvActions(data);
+    renderPrintableCv(data);
   }
 
   document.addEventListener("DOMContentLoaded", initPortfolio);

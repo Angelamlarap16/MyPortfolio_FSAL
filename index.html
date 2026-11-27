@@ -59,7 +59,8 @@
           </span>
         </button>
 
-        <a class="button button-primary button-sm header-cv" href="#contacto" title="Ir a contacto para hoja de vida">
+        <a class="button button-primary button-sm header-cv" id="header-cv-action" href="#contacto"
+          title="Ir a contacto para hoja de vida">
           <span aria-hidden="true">↓</span> CV
         </a>
 
@@ -95,7 +96,7 @@
 
           <div class="hero-actions">
             <a class="button button-primary" href="#proyectos">Ver proyectos</a>
-            <a class="button button-secondary" href="#contacto">Ver CV</a>
+            <a class="button button-secondary" id="hero-cv-action" href="#contacto">Ver CV</a>
           </div>
 
           <ul class="hero-links" aria-label="Enlaces directos de contacto y perfiles">
@@ -254,13 +255,15 @@
     <section id="contacto" class="section" aria-labelledby="contacto-title">
       <div class="container">
         <div class="section-header">
-          <h2 id="contacto-title">Contacto</h2>
+          <h2 id="contacto-title">CONTÁCTAME</h2>
+          <p class="section-subtitle">Conversemos sobre oportunidades en desarrollo Java Full Stack.</p>
         </div>
         <div class="section-body" data-section-container="contact">
           <ul class="contact-list">
             <li>
               <span class="contact-label">Correo:</span>
-              <a href="mailto:angelamlarap16@gmail.com">angelamlarap16@gmail.com</a>
+              <a
+                href="mailto:angelamlarap16@gmail.com?subject=Contacto%20profesional%20%E2%80%94%20Desarrollo%20Java%20Full%20Stack">angelamlarap16@gmail.com</a>
             </li>
             <li>
               <span class="contact-label">Teléfono:</span>
@@ -273,12 +276,12 @@
             <li>
               <span class="contact-label">GitHub:</span>
               <a href="https://github.com/Angelamlarap16" target="_blank"
-                rel="noopener noreferrer">github.com/Angelamlarap16</a>
+                rel="noopener noreferrer">@Angelamlarap16</a>
             </li>
             <li>
               <span class="contact-label">LinkedIn:</span>
               <a href="https://www.linkedin.com/in/amlarap16/" target="_blank"
-                rel="noopener noreferrer">linkedin.com/in/amlarap16</a>
+                rel="noopener noreferrer">Angela Lara</a>
             </li>
           </ul>
         </div>
@@ -286,10 +289,21 @@
     </section>
   </main>
 
+  <!-- Versión imprimible del CV orientada a desarrollo -->
+  <section id="cv-imprimible" class="printable-cv" aria-label="Hoja de vida imprimible"></section>
+
   <!-- Pie de página -->
   <footer class="site-footer">
+    <div class="footer-waves" aria-hidden="true">
+      <svg viewBox="0 0 1440 72" preserveAspectRatio="none">
+        <path d="M0,42 C240,12 480,64 720,38 C960,12 1200,58 1440,30 L1440,72 L0,72 Z" fill="currentColor"
+          fill-opacity="0.28"></path>
+        <path d="M0,54 C300,28 600,68 900,44 C1120,28 1280,52 1440,40 L1440,72 L0,72 Z" fill="currentColor"
+          fill-opacity="0.45"></path>
+      </svg>
+    </div>
     <div class="container footer-inner">
-      <p>Angela María Lara Picón &middot; Bogotá, Colombia</p>
+      <p>&copy; <span id="footer-year">2026</span> Angela María Lara Picón &middot; Bogotá, Colombia</p>
       <p class="footer-note">Desarrolladora Java Full Stack</p>
     </div>
   </footer>

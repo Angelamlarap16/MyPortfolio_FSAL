@@ -22,10 +22,13 @@ window.PORTFOLIO_DATA = {
 
   contact: {
     email: "angelamlarap16@gmail.com",
+    emailSubject: "Contacto profesional — Desarrollo Java Full Stack",
     phone: "+57 300 742 0213",
     location: "Bogotá, Colombia",
     github: "https://github.com/Angelamlarap16",
-    linkedin: "https://www.linkedin.com/in/amlarap16/"
+    githubHandle: "@Angelamlarap16",
+    linkedin: "https://www.linkedin.com/in/amlarap16/",
+    linkedinLabel: "Angela Lara"
   },
 
   // Proyectos reales ordenados con TMV y Pet Task Planner primero
@@ -260,10 +263,11 @@ window.PORTFOLIO_DATA = {
   // El blog permanecerá oculto mientras no existan artículos aprobados
   articles: [],
 
-  // Configuración del CV: enlace PDF pendiente y soporte para versión imprimible
+  // Configuración del CV: enlace externo al PDF y soporte para versión imprimible
   cv: {
-    pdfUrl: "",
+    pdfUrl: "https://drive.google.com/file/d/15HU25xqzLNr0SoEpWRJlTUCxcwPN7FQD/view?usp=sharing",
     printableAvailable: true,
-    printLabel: "Versión imprimible"
+    printLabel: "Imprimir / Guardar PDF",
+    pdfLabel: "Abrir CV en PDF"
   }
 };

@@ -1090,7 +1090,131 @@ body.modal-open {
   font-weight: 600;
 }
 
-/* Lista de contacto base */
+/* ==========================================================================
+   Contacto, versión imprimible y pie de página
+   ========================================================================== */
+.contact-layout {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.contact-button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-neutral);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.contact-button:hover {
+  border-color: var(--accent-secondary);
+  box-shadow: var(--shadow-md);
+  color: var(--text-primary);
+}
+
+.contact-button-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-alt);
+  border: 1px solid var(--border-neutral);
+  color: var(--accent-secondary);
+  flex-shrink: 0;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.contact-button:hover .contact-button-icon {
+  border-color: var(--border-sage-soft);
+  color: var(--accent-secondary);
+}
+
+/* Jerarquía prioritaria para correo electrónico */
+.contact-button-primary {
+  border-color: var(--border-accent-soft);
+}
+
+.contact-button-primary:hover {
+  border-color: var(--accent-primary);
+}
+
+.contact-button-primary .contact-button-icon {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--text-on-accent);
+}
+
+.contact-button-primary:hover .contact-button-icon {
+  background-color: var(--accent-primary-hover);
+  border-color: var(--accent-primary-hover);
+  color: var(--text-on-accent);
+}
+
+.contact-button-text {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.contact-button-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.contact-button-value {
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.contact-cv-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.contact-cv-copy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.contact-cv-copy h3 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.contact-cv-copy p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+.contact-cv-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+/* Lista de contacto base de respaldo sin JS */
 .contact-list {
   list-style: none;
   margin: 0;
@@ -1118,29 +1242,57 @@ body.modal-open {
   margin-right: 0.4rem;
 }
 
-/* Pie de página */
+/* Versión imprimible oculta en pantalla */
+.printable-cv {
+  display: none;
+}
+
+/* Pie de página grafito con ondas SVG discretas */
 .site-footer {
-  padding-block: var(--space-xl);
-  background-color: var(--bg-primary);
-  color: var(--text-secondary);
+  position: relative;
+  background-color: #161A18;
+  color: #BEC5BC;
   font-size: 0.9rem;
+  border-top: 1px solid #3B473F;
+  overflow: hidden;
+}
+
+.footer-waves {
+  width: 100%;
+  height: 44px;
+  color: #242C27;
+  line-height: 0;
+}
+
+.footer-waves svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .footer-inner {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
   gap: var(--space-xs) var(--space-lg);
+  padding-block: var(--space-lg) var(--space-xl);
 }
 
 .footer-inner p {
   margin: 0;
 }
 
+.footer-note {
+  color: #A8C6AE;
+  font-weight: 500;
+}
+
 /* ==========================================================================
    Navegación móvil
    ========================================================================== */
 @media (max-width: 860px) {
+  .contact-grid,
   .about-highlights {
     grid-template-columns: 1fr;
   }
@@ -1203,22 +1355,108 @@ body.modal-open {
 
 /* Alternativa imprimible para hoja de vida */
 @media print {
+  @page {
+    margin: 14mm 16mm;
+  }
+
   body {
     background-color: #ffffff;
     color: #111111;
+    font-size: 10pt;
+    line-height: 1.42;
   }
 
   .skip-link,
   .site-header,
-  .hero-actions {
-    display: none;
+  #contenido-principal,
+  .site-footer,
+  .modal-backdrop {
+    display: none !important;
   }
 
-  .section,
-  .section.alt {
+  .printable-cv {
+    display: block !important;
+    color: #111111;
     background-color: #ffffff;
-    padding-block: 1.25rem;
-    border-bottom: 1px solid #dddddd;
+  }
+
+  .cv-header {
+    padding-bottom: 8pt;
+    margin-bottom: 10pt;
+    border-bottom: 1.5pt solid #202A23;
+  }
+
+  .cv-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 18pt;
+    color: #111111;
+  }
+
+  .cv-role {
+    margin: 2pt 0 6pt;
+    font-size: 11pt;
+    font-weight: 700;
+    color: #396346;
+  }
+
+  .cv-contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4pt 12pt;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 9pt;
+    color: #222222;
+  }
+
+  .cv-section {
+    margin-bottom: 10pt;
+  }
+
+  .cv-section-title {
+    margin: 0 0 5pt;
+    padding-bottom: 2pt;
+    border-bottom: 0.75pt solid #cccccc;
+    font-family: var(--font-sans);
+    font-size: 10pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #202A23;
+  }
+
+  .cv-section p {
+    margin: 0 0 4pt;
+    color: #222222;
+  }
+
+  .cv-item {
+    margin-bottom: 6pt;
+    break-inside: avoid;
+  }
+
+  .cv-item-title {
+    margin: 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #111111;
+  }
+
+  .cv-item-meta {
+    margin: 1pt 0 3pt;
+    font-size: 9pt;
+    color: #444444;
+  }
+
+  .cv-list {
+    margin: 2pt 0 0;
+    padding-left: 14pt;
+  }
+
+  .cv-list li {
+    margin-bottom: 2pt;
   }
 
   a {
