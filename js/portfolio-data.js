@@ -126,9 +126,136 @@ window.PORTFOLIO_DATA = {
       conceptKey: "qa-con-jest"
     }
   ],
-  experience: [],
-  skills: [],
-  education: [],
+  about: {
+    paragraphs: [
+      "Soy desarrolladora Java Full Stack, en formación y licenciada en Psicología y Pedagogía por la Universidad Pedagógica Nacional. Actualmente curso el bootcamp de Generation y desarrollo proyectos que me permiten aplicar programación, diseño responsivo, control de versiones y trabajo colaborativo.",
+      "Mi experiencia profesional me ha permitido fortalecer el análisis de necesidades, la revisión de calidad y la documentación de procesos. Busco oportunidades junior o trainee para seguir creciendo en desarrollo web y contribuir a la construcción de aplicaciones claras y funcionales."
+    ],
+    highlights: [
+      {
+        title: "Desarrollo web",
+        description: "HTML, CSS y JavaScript."
+      },
+      {
+        title: "Formación Full Stack",
+        description: "Java, Spring Boot y MySQL."
+      },
+      {
+        title: "Calidad y colaboración",
+        description: "Revisión funcional, documentación, Git y Scrum."
+      }
+    ]
+  },
+
+  experience: {
+    work: [
+      {
+        organization: "UNIDEV",
+        role: "EdTech Innovation & Learning Systems Analyst",
+        modality: "Remota",
+        period: "2026 – actualidad",
+        contextTag: "Experiencia profesional",
+        tasks: [
+          "Implementación y adaptación de lecciones con HTML y CSS.",
+          "Revisión funcional y validación de recursos y actividades en Moodle.",
+          "Documentación y seguimiento de ajustes.",
+          "Participación en ciclos ágiles."
+        ]
+      }
+    ],
+    trainingProjects: [
+      {
+        organization: "Generation",
+        role: "Participante del bootcamp Java Full Stack",
+        period: "2026, en formación",
+        contextTag: "Proyectos formativos",
+        highlights: [
+          "Desarrollo de proyectos web en equipo e integración entre frontend y backend.",
+          "Control de versiones con Git y trabajo colaborativo en repositorios compartidos.",
+          "Organización de entregas y seguimiento mediante Scrum."
+        ]
+      }
+    ]
+  },
+
+  skills: [
+    {
+      category: "Frontend",
+      contextTag: "Aplicado en proyectos",
+      items: ["HTML5", "CSS3", "JavaScript", "Diseño responsivo"]
+    },
+    {
+      category: "Backend y datos",
+      contextTag: "En formación",
+      items: ["Java", "Spring Boot", "MySQL"]
+    },
+    {
+      category: "Herramientas",
+      contextTag: "Aplicado en proyectos",
+      items: ["Git", "GitHub", "Visual Studio Code", "IntelliJ IDEA"]
+    },
+    {
+      category: "Colaboración",
+      contextTag: "Experiencia profesional",
+      items: ["Scrum", "Comunicación", "Documentación"]
+    },
+    {
+      category: "Calidad",
+      contextTag: "Experiencia profesional",
+      items: [
+        "Revisión funcional",
+        "Validación de interfaces",
+        "Práctica de pruebas unitarias con Jest"
+      ]
+    },
+    {
+      category: "Habilidades de trabajo",
+      contextTag: "",
+      items: [
+        "Pensamiento analítico",
+        "Atención al detalle",
+        "Aprendizaje continuo",
+        "Trabajo en equipo"
+      ]
+    },
+    {
+      category: "Idiomas",
+      contextTag: "",
+      items: ["Español nativo", "Inglés B1"]
+    }
+  ],
+
+  education: {
+    primary: [
+      {
+        institution: "Generation",
+        program: "Desarrollo Java Full Stack Jr.",
+        period: "2026, en formación"
+      },
+      {
+        institution: "Universidad Pedagógica Nacional",
+        program: "Licenciatura en Psicología y Pedagogía",
+        period: "Julio de 2022"
+      }
+    ],
+    complementary: [
+      {
+        program: "Programación Web Básica con HTML, CSS y JavaScript",
+        institution: "CVA del Tecnológico de Monterrey",
+        period: ""
+      },
+      {
+        program: "Aspectos básicos del Diseño de Experiencia del Usuario",
+        institution: "Google / Coursera",
+        period: "Abril de 2026"
+      },
+      {
+        program: "Fundamentos de Inteligencia Artificial",
+        institution: "MinTIC e IBM",
+        period: "Julio de 2026"
+      }
+    ]
+  },
 
   // El blog permanecerá oculto mientras no existan artículos aprobados
   articles: [],

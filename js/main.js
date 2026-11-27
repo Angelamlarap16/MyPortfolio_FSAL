@@ -726,6 +726,205 @@
   }
 
   /**
+   * Renderiza la sección Sobre mí con biografía breve y tres tarjetas clave.
+   * @param {object|null} data
+   */
+  function renderAbout(data) {
+    const container = document.querySelector('[data-section-container="about"]');
+    const about = data && data.about;
+    if (!container || !about) {
+      return;
+    }
+
+    container.innerHTML = "";
+    const layout = createEl("div", "about-layout");
+
+    if (Array.isArray(about.paragraphs) && about.paragraphs.length > 0) {
+      const bioCard = createEl("div", "card about-bio");
+      about.paragraphs.forEach(function (text) {
+        bioCard.appendChild(createEl("p", "", text));
+      });
+      layout.appendChild(bioCard);
+    }
+
+    if (Array.isArray(about.highlights) && about.highlights.length > 0) {
+      const highlightsGrid = createEl("div", "about-highlights");
+      about.highlights.forEach(function (item) {
+        const card = createEl("article", "card highlight-card");
+        card.appendChild(createEl("h3", "", item.title));
+        card.appendChild(createEl("p", "", item.description));
+        highlightsGrid.appendChild(card);
+      });
+      layout.appendChild(highlightsGrid);
+    }
+
+    container.appendChild(layout);
+  }
+
+  /**
+   * Construye una tarjeta de trayectoria (laboral o formativa) diferenciando su contexto.
+   * @param {object} entry
+   * @param {string[]} listItems
+   * @returns {HTMLElement}
+   */
+  function buildTrajectoryCard(entry, listItems) {
+    const card = createEl("article", "card trajectory-card");
+    const header = createEl("div", "trajectory-card-header");
+    const info = createEl("div");
+
+    info.appendChild(createEl("h4", "trajectory-role", entry.role));
+    const orgDetails = [entry.organization, entry.modality].filter(Boolean).join(" · ");
+    info.appendChild(createEl("p", "trajectory-org", orgDetails));
+
+    const meta = createEl("div", "trajectory-meta");
+    if (entry.contextTag) {
+      meta.appendChild(createEl("span", "tag tag-sage", entry.contextTag));
+    }
+    if (entry.period) {
+      meta.appendChild(createEl("span", "tag", entry.period));
+    }
+
+    header.appendChild(info);
+    header.appendChild(meta);
+    card.appendChild(header);
+
+    if (Array.isArray(listItems) && listItems.length > 0) {
+      const list = createEl("ul", "trajectory-list");
+      listItems.forEach(function (item) {
+        list.appendChild(createEl("li", "", item));
+      });
+      card.appendChild(list);
+    }
+
+    return card;
+  }
+
+  /**
+   * Renderiza la sección Experiencia separando empleo real y proyectos formativos.
+   * @param {object|null} data
+   */
+  function renderExperience(data) {
+    const container = document.querySelector('[data-section-container="experience"]');
+    const experience = data && data.experience;
+    if (!container || !experience) {
+      return;
+    }
+
+    container.innerHTML = "";
+    const groups = createEl("div", "trajectory-groups");
+
+    if (Array.isArray(experience.work) && experience.work.length > 0) {
+      const workGroup = createEl("div", "trajectory-group");
+      workGroup.appendChild(createEl("h3", "group-heading", "Experiencia laboral"));
+      experience.work.forEach(function (item) {
+        workGroup.appendChild(buildTrajectoryCard(item, item.tasks));
+      });
+      groups.appendChild(workGroup);
+    }
+
+    if (Array.isArray(experience.trainingProjects) && experience.trainingProjects.length > 0) {
+      const trainingGroup = createEl("div", "trajectory-group");
+      trainingGroup.appendChild(createEl("h3", "group-heading", "Proyectos formativos"));
+      experience.trainingProjects.forEach(function (item) {
+        trainingGroup.appendChild(buildTrajectoryCard(item, item.highlights));
+      });
+      groups.appendChild(trainingGroup);
+    }
+
+    container.appendChild(groups);
+  }
+
+  /**
+   * Renderiza las categorías de habilidades con etiquetas de contexto sin porcentajes.
+   * @param {object|null} data
+   */
+  function renderSkills(data) {
+    const container = document.querySelector('[data-section-container="skills"]');
+    if (!container || !data || !Array.isArray(data.skills) || data.skills.length === 0) {
+      return;
+    }
+
+    container.innerHTML = "";
+    const grid = createEl("div", "skills-grid");
+
+    data.skills.forEach(function (group) {
+      const card = createEl("article", "card skill-card");
+      const header = createEl("div", "skill-card-header");
+      header.appendChild(createEl("h3", "", group.category));
+
+      if (group.contextTag) {
+        header.appendChild(createEl("span", "tag tag-sage", group.contextTag));
+      }
+
+      card.appendChild(header);
+
+      if (Array.isArray(group.items) && group.items.length > 0) {
+        const list = createEl("ul", "skill-tags");
+        group.items.forEach(function (item) {
+          list.appendChild(createEl("li", "tag", item));
+        });
+        card.appendChild(list);
+      }
+
+      grid.appendChild(card);
+    });
+
+    container.appendChild(grid);
+  }
+
+  /**
+   * Construye un bloque de tarjetas de formación académica o complementaria.
+   * @param {string} headingText
+   * @param {object[]} items
+   * @returns {HTMLElement}
+   */
+  function buildEducationGroup(headingText, items) {
+    const group = createEl("div", "trajectory-group");
+    group.appendChild(createEl("h3", "group-heading", headingText));
+
+    const grid = createEl("div", "education-grid");
+    items.forEach(function (item) {
+      const card = createEl("article", "card education-card");
+      card.appendChild(createEl("h4", "", item.program));
+      card.appendChild(createEl("p", "education-institution", item.institution));
+      if (item.period) {
+        card.appendChild(createEl("p", "education-period", item.period));
+      }
+      grid.appendChild(card);
+    });
+
+    group.appendChild(grid);
+    return group;
+  }
+
+  /**
+   * Renderiza la sección Formación separando formación principal y complementaria.
+   * @param {object|null} data
+   */
+  function renderEducation(data) {
+    const container = document.querySelector('[data-section-container="education"]');
+    const education = data && data.education;
+    if (!container || !education) {
+      return;
+    }
+
+    container.innerHTML = "";
+    const groups = createEl("div", "education-groups");
+
+    if (Array.isArray(education.primary) && education.primary.length > 0) {
+      groups.appendChild(buildEducationGroup("Formación principal", education.primary));
+    }
+
+    if (Array.isArray(education.complementary) && education.complementary.length > 0) {
+      groups.appendChild(
+        buildEducationGroup("Formación complementaria", education.complementary)
+      );
+    }
+
+    container.appendChild(groups);
+  }
+
+  /**
    * Punto de entrada para inicializar la interfaz del portafolio.
    */
   function initPortfolio() {
@@ -737,6 +936,10 @@
     const data = getPortfolioData();
     initHeroMedia(data);
     renderProjects(data);
+    renderAbout(data);
+    renderExperience(data);
+    renderSkills(data);
+    renderEducation(data);
   }
 
   document.addEventListener("DOMContentLoaded", initPortfolio);
