@@ -1544,6 +1544,108 @@
   }
 
   /**
+   * Crea y gestiona una capa sutil y pausada de copos en la portada respetando
+   * clic/lectura libres, pausa fuera de vista y preferencia de movimiento reducido.
+   */
+  function initHeroSnow() {
+    const heroSection = document.getElementById("portada");
+    const snowLayer = document.getElementById("hero-snow");
+
+    if (!heroSection || !snowLayer) {
+      return;
+    }
+
+    const motionQuery = window.matchMedia
+      ? window.matchMedia("(prefers-reduced-motion: reduce)")
+      : null;
+
+    const flakeConfigs = [
+      { left: 2, size: 5, opacity: 0.52, duration: 28, delay: -6, driftA: 34, driftB: 16, driftC: 58, color: "var(--text-secondary)" },
+      { left: 5, size: 4, opacity: 0.44, duration: 36, delay: -21, driftA: -12, driftB: 28, driftC: 42, color: "var(--accent-link)" },
+      { left: 14, size: 6, opacity: 0.46, duration: 31, delay: -12, driftA: -36, driftB: -18, driftC: -56, color: "var(--accent-secondary)" },
+      { left: 26, size: 4.5, opacity: 0.42, duration: 39, delay: -28, driftA: 42, driftB: 14, driftC: 66, color: "var(--text-secondary)" },
+      { left: 41, size: 5.5, opacity: 0.48, duration: 33, delay: -17, driftA: -44, driftB: -22, driftC: -64, color: "var(--accent-link)" },
+      { left: 57, size: 5, opacity: 0.54, duration: 27, delay: -4, driftA: 28, driftB: -16, driftC: 34, color: "var(--accent-secondary)" },
+      { left: 61, size: 4, opacity: 0.48, duration: 35, delay: -23, driftA: -26, driftB: 20, driftC: -32, color: "var(--text-secondary)" },
+      { left: 78, size: 6, opacity: 0.46, duration: 30, delay: -15, driftA: 48, driftB: 26, driftC: 72, color: "var(--accent-link)" },
+      { left: 94, size: 5, opacity: 0.54, duration: 29, delay: -9, driftA: -38, driftB: -14, driftC: -58, color: "var(--accent-secondary)" },
+      { left: 97, size: 4, opacity: 0.46, duration: 41, delay: -31, driftA: -24, driftB: 10, driftC: -44, color: "var(--text-secondary)" },
+      { left: 3, size: 6, opacity: 0.48, duration: 34, delay: -19, driftA: 52, driftB: 24, driftC: 76, color: "var(--accent-secondary)", desktopOnly: true },
+      { left: 19, size: 4, opacity: 0.42, duration: 42, delay: -33, driftA: -34, driftB: 12, driftC: -48, color: "var(--text-secondary)", desktopOnly: true },
+      { left: 59, size: 6.5, opacity: 0.5, duration: 26, delay: -14, driftA: -22, driftB: 24, driftC: -12, color: "var(--accent-link)", desktopOnly: true },
+      { left: 72, size: 4.5, opacity: 0.44, duration: 38, delay: -25, driftA: 36, driftB: -14, driftC: 54, color: "var(--text-secondary)", desktopOnly: true },
+      { left: 88, size: 5.5, opacity: 0.5, duration: 32, delay: -2, driftA: -46, driftB: -20, driftC: -70, color: "var(--accent-link)", desktopOnly: true },
+      { left: 96, size: 4.5, opacity: 0.52, duration: 37, delay: -27, driftA: -54, driftB: -28, driftC: -82, color: "var(--accent-secondary)", desktopOnly: true }
+    ];
+
+    let isInView = true;
+
+    function renderFlakes() {
+      if (snowLayer.childElementCount > 0) {
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+      flakeConfigs.forEach(function (cfg) {
+        const flake = document.createElement("span");
+        flake.className = cfg.desktopOnly
+          ? "hero-snowflake hero-snowflake--desktop"
+          : "hero-snowflake";
+        flake.style.setProperty("--snow-left", cfg.left + "%");
+        flake.style.setProperty("--snow-size", cfg.size + "px");
+        flake.style.setProperty("--snow-opacity", String(cfg.opacity));
+        flake.style.setProperty("--snow-duration", cfg.duration + "s");
+        flake.style.setProperty("--snow-delay", cfg.delay + "s");
+        flake.style.setProperty("--snow-drift-a", cfg.driftA + "px");
+        flake.style.setProperty("--snow-drift-b", cfg.driftB + "px");
+        flake.style.setProperty("--snow-drift-c", cfg.driftC + "px");
+        flake.style.setProperty("--snow-color", cfg.color);
+        fragment.appendChild(flake);
+      });
+      snowLayer.appendChild(fragment);
+    }
+
+    function syncSnowState() {
+      const reducedMotion = Boolean(motionQuery && motionQuery.matches);
+
+      if (reducedMotion) {
+        snowLayer.hidden = true;
+        snowLayer.innerHTML = "";
+        heroSection.classList.remove("is-snow-auto-paused");
+        return;
+      }
+
+      renderFlakes();
+      snowLayer.hidden = false;
+      heroSection.classList.toggle("is-snow-auto-paused", document.hidden || !isInView);
+    }
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        function (entries) {
+          const entry = entries[0];
+          isInView = Boolean(entry && entry.isIntersecting);
+          syncSnowState();
+        },
+        { threshold: 0.02 }
+      );
+      observer.observe(heroSection);
+    }
+
+    document.addEventListener("visibilitychange", syncSnowState);
+
+    if (motionQuery) {
+      if (typeof motionQuery.addEventListener === "function") {
+        motionQuery.addEventListener("change", syncSnowState);
+      } else if (typeof motionQuery.addListener === "function") {
+        motionQuery.addListener(syncSnowState);
+      }
+    }
+
+    syncSnowState();
+  }
+
+  /**
    * Punto de entrada para inicializar la interfaz del portafolio.
    */
   function initPortfolio() {
@@ -1555,6 +1657,7 @@
 
     const data = getPortfolioData();
     initHeroTypewriter(data);
+    initHeroSnow();
     initHeroMedia(data);
     renderProjects(data);
     renderAbout(data);

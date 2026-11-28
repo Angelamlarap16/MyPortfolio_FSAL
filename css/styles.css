@@ -407,10 +407,72 @@ h3 {
 
 /* Portada */
 .hero-section {
+  position: relative;
+  overflow: hidden;
   padding-block: clamp(3rem, 6vw, 5rem);
 }
 
+.hero-snow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+}
+
+.hero-snow[hidden] {
+  display: none;
+}
+
+.hero-snowflake {
+  position: absolute;
+  top: -14px;
+  left: var(--snow-left, 50%);
+  width: var(--snow-size, 5px);
+  height: var(--snow-size, 5px);
+  border-radius: var(--radius-pill);
+  background-color: var(--snow-color, var(--text-secondary));
+  opacity: var(--snow-opacity, 0.45);
+  will-change: transform;
+  animation: hero-snow-fall var(--snow-duration, 32s) linear var(--snow-delay, 0s) infinite;
+}
+
+.hero-snowflake--desktop {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hero-snowflake--desktop {
+    display: block;
+  }
+}
+
+.hero-section.is-snow-auto-paused .hero-snowflake {
+  animation-play-state: paused;
+}
+
+@keyframes hero-snow-fall {
+  0% {
+    transform: translate3d(0, -18px, 0);
+  }
+
+  35% {
+    transform: translate3d(var(--snow-drift-a, 24px), calc(max(100vh, 860px) * 0.35), 0);
+  }
+
+  70% {
+    transform: translate3d(var(--snow-drift-b, -18px), calc(max(100vh, 860px) * 0.7), 0);
+  }
+
+  100% {
+    transform: translate3d(var(--snow-drift-c, 32px), max(100vh, 860px), 0);
+  }
+}
+
 .hero-layout {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.9fr);
   align-items: stretch;
@@ -1432,6 +1494,14 @@ body.modal-open {
     display: none;
     animation: none;
   }
+
+  .hero-snow {
+    display: none;
+  }
+
+  .hero-snowflake {
+    animation: none;
+  }
 }
 
 /* Alternativa imprimible para hoja de vida */
@@ -1452,7 +1522,8 @@ body.modal-open {
   #contenido-principal,
   .site-footer,
   .modal-backdrop,
-  .hero-cursor {
+  .hero-cursor,
+  .hero-snow {
     display: none !important;
   }
 
