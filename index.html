@@ -22,6 +22,7 @@
 
   <!-- Datos y lógica en scripts clásicos con defer para funcionar en archivo local y GitHub Pages -->
   <script src="js/portfolio-data.js" defer></script>
+  <script src="js/core/app.js" defer></script>
   <script src="js/main.js" defer></script>
 </head>
 
@@ -314,30 +315,6 @@
       <p class="footer-note">Desarrolladora Java Full Stack</p>
     </div>
   </footer>
-
-  <!-- Modal accesible para ficha completa de proyecto -->
-  <div class="modal-backdrop" id="project-modal" role="dialog" aria-modal="true" aria-labelledby="modal-project-title"
-    hidden>
-    <div class="modal-dialog card-elevated" role="document">
-      <div class="modal-header">
-        <div class="modal-header-info">
-          <div class="project-meta" id="modal-project-meta"></div>
-          <h3 class="modal-title" id="modal-project-title"></h3>
-        </div>
-        <button type="button" class="icon-button modal-close" id="modal-close" aria-label="Cerrar ficha del proyecto">
-          <span aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round">
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-            </svg>
-          </span>
-        </button>
-      </div>
-      <div class="modal-body" id="modal-project-body"></div>
-      <div class="modal-footer" id="modal-project-actions"></div>
-    </div>
-  </div>
 </body>
 
 </html>

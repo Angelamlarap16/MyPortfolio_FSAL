@@ -6,6 +6,14 @@
 (function () {
   "use strict";
 
+  const app = window.PortfolioApp;
+  if (!app) {
+    return;
+  }
+
+  const createEl = app.dom.createEl;
+  const buildExternalLink = app.dom.createExternalLink;
+
   const THEME_STORAGE_KEY = "portfolio-theme";
   const MOBILE_BREAKPOINT = 860;
 
@@ -15,28 +23,13 @@
   };
 
   /**
-   * Obtiene los datos centralizados del portafolio si están disponibles.
-   * @returns {object|null}
-   */
-  function getPortfolioData() {
-    if (typeof window.PORTFOLIO_DATA === "object" && window.PORTFOLIO_DATA !== null) {
-      return window.PORTFOLIO_DATA;
-    }
-    return null;
-  }
-
-  /**
    * Lee una preferencia de tema guardada sin interrumpir el sitio si localStorage falla.
    * @returns {"dark"|"light"}
    */
   function readStoredTheme() {
-    try {
-      const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
-      if (saved === "light" || saved === "dark") {
-        return saved;
-      }
-    } catch (error) {
-      // Se ignora el error en entornos con almacenamiento restringido
+    const saved = app.storage.get(THEME_STORAGE_KEY);
+    if (saved === "light" || saved === "dark") {
+      return saved;
     }
     return "dark";
   }
@@ -46,11 +39,7 @@
    * @param {"dark"|"light"} theme
    */
   function saveTheme(theme) {
-    try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch (error) {
-      // Se continúa operando en memoria aunque falle el almacenamiento
-    }
+    app.storage.set(THEME_STORAGE_KEY, theme);
   }
 
   /**
@@ -199,23 +188,23 @@
       });
     });
 
-        if (!("IntersectionObserver" in window)) {
-          return;
-        }
+    if (!("IntersectionObserver" in window)) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
-          function (entries) {
-            const visibleEntries = entries
-              .filter(function (entry) {
-                return entry.isIntersecting;
-              })
-              .sort(function (a, b) {
-                return b.intersectionRatio - a.intersectionRatio;
-              });
+      function (entries) {
+        const visibleEntries = entries
+          .filter(function (entry) {
+            return entry.isIntersecting;
+          })
+          .sort(function (a, b) {
+            return b.intersectionRatio - a.intersectionRatio;
+          });
 
-            if (visibleEntries.length > 0) {
-              setActiveLink(visibleEntries[0].target.id);
-            }
+        if (visibleEntries.length > 0) {
+          setActiveLink(visibleEntries[0].target.id);
+        }
       },
       {
         rootMargin: "-25% 0px -55% 0px",
@@ -322,24 +311,6 @@
   }
 
   /**
-   * Crea un elemento con clase y texto opcionales.
-   * @param {string} tagName
-   * @param {string} [className]
-   * @param {string} [text]
-   * @returns {HTMLElement}
-   */
-  function createEl(tagName, className, text) {
-    const element = document.createElement(tagName);
-    if (className) {
-      element.className = className;
-    }
-    if (typeof text === "string" && text.length > 0) {
-      element.textContent = text;
-    }
-    return element;
-  }
-
-  /**
    * Construye el contenedor visual del proyecto: captura real o vista conceptual SVG.
    * @param {object} project
    * @returns {HTMLElement}
@@ -398,222 +369,122 @@
   }
 
   /**
-   * Construye un enlace externo seguro para código o demo.
-   * @param {string} label
-   * @param {string} url
-   * @param {string} buttonClass
-   * @returns {HTMLAnchorElement}
-   */
-  function buildExternalLink(label, url, buttonClass) {
-    const anchor = createEl("a", buttonClass, label);
-    anchor.href = url;
-    anchor.target = "_blank";
-    anchor.rel = "noopener noreferrer";
-    return anchor;
-  }
-
-  /**
-   * Construye una tarjeta de proyecto para la cuadrícula principal.
+   * Construye una tarjeta tipo carátula de álbum con foto (o SVG conceptual) y nombre.
    * @param {object} project
-   * @returns {HTMLElement}
+   * @param {number} index
+   * @returns {HTMLButtonElement}
    */
-  function buildProjectCard(project) {
-    const card = createEl("article", "card project-card");
+  function buildAlbumCard(project, index) {
+    const button = createEl("button", "album-card");
+    button.type = "button";
+    button.id = "album-card-" + project.id;
+    button.setAttribute("aria-expanded", "false");
+    button.setAttribute("aria-controls", "project-detail-panel");
 
-    card.appendChild(buildProjectMedia(project));
+    const coverWrap = createEl("span", "album-cover-wrap");
+    coverWrap.setAttribute("aria-hidden", "true");
 
-    const meta = createEl("div", "project-meta");
-    meta.appendChild(createEl("span", "tag", project.type));
-    meta.appendChild(createEl("span", "tag tag-sage", project.status));
-    card.appendChild(meta);
+    const discMark = createEl("span", "album-disc-mark", String(index + 1).padStart(2, "0"));
+    coverWrap.appendChild(discMark);
 
-    card.appendChild(createEl("h3", "project-title", project.name));
-    card.appendChild(createEl("p", "project-description", project.description));
+    const cover = createEl("span", "album-cover");
 
-    if (Array.isArray(project.contributions) && project.contributions.length > 0) {
-      const contributionBox = createEl("div", "project-contribution");
-      contributionBox.appendChild(
-        createEl("p", "project-block-label", project.contributionTitle || "Mi aporte")
-      );
-
-      if (project.contributions.length === 1) {
-        contributionBox.appendChild(createEl("p", "", project.contributions[0]));
-      } else {
-        const list = createEl("ul", "project-contribution-list");
-        project.contributions.slice(0, 3).forEach(function (item) {
-          list.appendChild(createEl("li", "", item));
-        });
-        contributionBox.appendChild(list);
-      }
-
-      card.appendChild(contributionBox);
+    function renderCoverFallback() {
+      cover.innerHTML = getProjectConceptSvg(project.conceptKey);
     }
 
-    const techBlock = buildTechBlock(project);
-    if (techBlock) {
-      card.appendChild(techBlock);
+    if (project.image) {
+      const img = document.createElement("img");
+      img.alt = "";
+      img.loading = "lazy";
+      img.addEventListener("error", renderCoverFallback);
+      img.src = project.image;
+      cover.appendChild(img);
+    } else {
+      renderCoverFallback();
     }
 
-    const actions = createEl("div", "project-actions");
-    if (project.codeUrl) {
-      actions.appendChild(
-        buildExternalLink("Código", project.codeUrl, "button button-secondary button-sm")
-      );
-    }
-    if (project.demoUrl) {
-      actions.appendChild(
-        buildExternalLink("Ver demo", project.demoUrl, "button button-primary button-sm")
-      );
-    }
-
-    const detailButton = createEl("button", "button button-ghost button-sm", "Ver ficha completa");
-    detailButton.type = "button";
-    detailButton.setAttribute("aria-haspopup", "dialog");
-    detailButton.addEventListener("click", function () {
-      openProjectModal(project, detailButton);
-    });
-    actions.appendChild(detailButton);
-
-    card.appendChild(actions);
-    return card;
-  }
-
-  let activeModalTrigger = null;
-
-  /**
-   * Activa o desactiva la interacción del fondo mientras el modal está abierto.
-   * @param {boolean} isModalOpen
-   */
-  function setBackgroundInert(isModalOpen) {
-    const regions = document.querySelectorAll(".site-header, #contenido-principal, .site-footer");
-    regions.forEach(function (region) {
-      if (isModalOpen) {
-        region.setAttribute("aria-hidden", "true");
-        region.inert = true;
-      } else {
-        region.removeAttribute("aria-hidden");
-        region.inert = false;
-      }
-    });
+    coverWrap.appendChild(cover);
+    button.appendChild(coverWrap);
+    button.appendChild(createEl("span", "album-title", project.name));
+    return button;
   }
 
   /**
-   * Crea un apartado dentro del cuerpo del modal únicamente si hay datos disponibles.
+   * Crea un bloque de detalle dentro del panel común solo cuando existen datos disponibles.
    * @param {string} title
    * @param {string|string[]} content
    * @returns {HTMLElement|null}
    */
-  function buildModalSection(title, content) {
+  function buildProjectDetailBlock(title, content) {
     if (!content || (Array.isArray(content) && content.length === 0)) {
       return null;
     }
 
-    const section = createEl("section", "modal-section");
-    section.appendChild(createEl("h4", "modal-section-title", title));
+    const block = createEl("section", "project-detail-block");
+    block.appendChild(createEl("p", "project-block-label", title));
 
     if (Array.isArray(content)) {
-      const list = createEl("ul", "modal-section-list");
+      const list = createEl("ul", "project-detail-list");
       content.forEach(function (item) {
         list.appendChild(createEl("li", "", item));
       });
-      section.appendChild(list);
+      block.appendChild(list);
     } else {
-      section.appendChild(createEl("p", "", content));
+      block.appendChild(createEl("p", "", content));
     }
 
-    return section;
+    return block;
   }
 
   /**
-   * Abre el modal accesible con la información disponible del proyecto.
+   * Actualiza el panel de ficha completa con el proyecto elegido y el botón de salida.
+   * @param {HTMLElement} panelEl
    * @param {object} project
-   * @param {HTMLElement} triggerElement
+   * @param {Function} onClose
    */
-  function openProjectModal(project, triggerElement) {
-    const modal = document.getElementById("project-modal");
-    const metaEl = document.getElementById("modal-project-meta");
-    const titleEl = document.getElementById("modal-project-title");
-    const bodyEl = document.getElementById("modal-project-body");
-    const actionsEl = document.getElementById("modal-project-actions");
-    const closeButton = document.getElementById("modal-close");
+  function renderProjectStage(panelEl, project, onClose) {
+    panelEl.innerHTML = "";
+    panelEl.setAttribute("aria-labelledby", "project-stage-title");
 
-    if (!modal || !metaEl || !titleEl || !bodyEl || !actionsEl || !closeButton) {
-      return;
-    }
-
-    activeModalTrigger = triggerElement || document.activeElement;
-
-    metaEl.innerHTML = "";
+    const topBar = createEl("div", "project-stage-topbar");
+    const meta = createEl("div", "project-meta");
     if (project.type) {
-      metaEl.appendChild(createEl("span", "tag", project.type));
+      meta.appendChild(createEl("span", "tag", project.type));
     }
     if (project.status) {
-      metaEl.appendChild(createEl("span", "tag tag-sage", project.status));
+      meta.appendChild(createEl("span", "tag tag-sage", project.status));
     }
+    topBar.appendChild(meta);
 
-    titleEl.textContent = project.name || "Ficha de proyecto";
-    bodyEl.innerHTML = "";
-    bodyEl.scrollTop = 0;
+    const exitButton = createEl(
+      "button",
+      "button button-secondary button-sm",
+      "Seguir explorando proyectos"
+    );
+    exitButton.type = "button";
+    exitButton.addEventListener("click", onClose);
+    topBar.appendChild(exitButton);
+    panelEl.appendChild(topBar);
 
-    const purposeSection = buildModalSection("Propósito", project.purpose || project.description);
-    if (purposeSection) {
-      bodyEl.appendChild(purposeSection);
-    }
+    const body = createEl("div", "project-stage-body");
 
-    const problemSection = buildModalSection("Problema que aborda", project.problem);
-    if (problemSection) {
-      bodyEl.appendChild(problemSection);
-    }
-
-    const contributionSection = buildModalSection("Mi contribución", project.contributions);
-    if (contributionSection) {
-      bodyEl.appendChild(contributionSection);
-    }
+    const aside = createEl("div", "project-stage-aside");
+    aside.appendChild(buildProjectMedia(project));
 
     const techBlock = buildTechBlock(project);
     if (techBlock) {
-      const techSection = createEl("section", "modal-section");
-      techSection.appendChild(
-        createEl("h4", "modal-section-title", project.technologiesLabel || "Tecnologías")
-      );
-      const list = techBlock.querySelector(".project-tech-list");
-      if (list) {
-        techSection.appendChild(list);
-      }
-      bodyEl.appendChild(techSection);
+      aside.appendChild(techBlock);
     }
 
-    const featuresSection = buildModalSection("Funcionalidades", project.features);
-    if (featuresSection) {
-      bodyEl.appendChild(featuresSection);
-    }
-
-    const challengesSection = buildModalSection(
-      "Desafíos y soluciones documentados",
-      project.challenges
-    );
-    if (challengesSection) {
-      bodyEl.appendChild(challengesSection);
-    }
-
-    const statusSection = buildModalSection("Estado", project.status);
-    if (statusSection) {
-      bodyEl.appendChild(statusSection);
-    }
-
-    const nextStepsSection = buildModalSection("Próximos pasos conocidos", project.nextSteps);
-    if (nextStepsSection) {
-      bodyEl.appendChild(nextStepsSection);
-    }
-
-    actionsEl.innerHTML = "";
+    const actions = createEl("div", "project-actions");
     if (project.demoUrl) {
-      actionsEl.appendChild(
+      actions.appendChild(
         buildExternalLink("Ver demo", project.demoUrl, "button button-primary button-sm")
       );
     }
     if (project.codeUrl) {
-      actionsEl.appendChild(
+      actions.appendChild(
         buildExternalLink(
           "Código en GitHub",
           project.codeUrl,
@@ -621,95 +492,53 @@
         )
       );
     }
+    if (actions.children.length > 0) {
+      aside.appendChild(actions);
+    }
 
-    modal.hidden = false;
-    document.body.classList.add("modal-open");
-    setBackgroundInert(true);
+    const content = createEl("div", "project-stage-content");
+    const titleEl = createEl("h3", "project-title", project.name);
+    titleEl.id = "project-stage-title";
+    content.appendChild(titleEl);
+    content.appendChild(createEl("p", "project-description", project.description));
 
-    window.requestAnimationFrame(function () {
-      closeButton.focus();
-    });
+    const details = createEl("div", "project-stage-details");
+
+    const contributionBlock = buildProjectDetailBlock(
+      project.contributionTitle || "Mi contribución",
+      project.contributions
+    );
+    if (contributionBlock) {
+      details.appendChild(contributionBlock);
+    }
+
+    const featuresBlock = buildProjectDetailBlock(
+      project.featuresTitle || "Funcionalidades",
+      project.features
+    );
+    if (featuresBlock) {
+      details.appendChild(featuresBlock);
+    }
+
+    const nextStepsBlock = buildProjectDetailBlock(
+      "Próximos pasos conocidos",
+      project.nextSteps
+    );
+    if (nextStepsBlock) {
+      details.appendChild(nextStepsBlock);
+    }
+
+    if (details.children.length > 0) {
+      content.appendChild(details);
+    }
+
+    body.appendChild(aside);
+    body.appendChild(content);
+    panelEl.appendChild(body);
   }
 
   /**
-   * Cierra el modal y devuelve el foco al botón que lo abrió.
-   */
-  function closeProjectModal() {
-    const modal = document.getElementById("project-modal");
-    if (!modal || modal.hidden) {
-      return;
-    }
-
-    modal.hidden = true;
-    document.body.classList.remove("modal-open");
-    setBackgroundInert(false);
-
-    if (activeModalTrigger && typeof activeModalTrigger.focus === "function") {
-      activeModalTrigger.focus();
-    }
-    activeModalTrigger = null;
-  }
-
-  /**
-   * Inicializa los eventos de cierre y contención de foco del modal.
-   */
-  function initProjectModal() {
-    const modal = document.getElementById("project-modal");
-    const closeButton = document.getElementById("modal-close");
-
-    if (!modal || !closeButton) {
-      return;
-    }
-
-    closeButton.addEventListener("click", closeProjectModal);
-
-    modal.addEventListener("click", function (event) {
-      if (event.target === modal) {
-        closeProjectModal();
-      }
-    });
-
-    document.addEventListener("keydown", function (event) {
-      if (modal.hidden) {
-        return;
-      }
-
-      if (event.key === "Escape") {
-        event.preventDefault();
-        closeProjectModal();
-        return;
-      }
-
-      if (event.key === "Tab") {
-        const focusable = Array.from(
-          modal.querySelectorAll(
-            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-          )
-        ).filter(function (el) {
-          return !el.hidden && el.offsetParent !== null;
-        });
-
-        if (focusable.length === 0) {
-          event.preventDefault();
-          return;
-        }
-
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (event.shiftKey && document.activeElement === first) {
-          event.preventDefault();
-          last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-          event.preventDefault();
-          first.focus();
-        }
-      }
-    });
-  }
-
-  /**
-   * Renderiza las tarjetas de proyectos desde PORTFOLIO_DATA.
+   * Renderiza el álbum compacto de proyectos y muestra la ficha completa solo al seleccionar uno.
    * @param {object|null} data
    */
   function renderProjects(data) {
@@ -719,14 +548,99 @@
     }
 
     container.innerHTML = "";
+    const projects = data.projects;
+    let activeIndex = -1;
 
-    const grid = createEl("div", "projects-grid");
+    const showcase = createEl("div", "projects-showcase");
+    showcase.appendChild(
+      createEl(
+        "p",
+        "projects-album-hint",
+        "Explora el álbum de proyectos y selecciona el que quieras revisar en detalle."
+      )
+    );
 
-    data.projects.forEach(function (project) {
-      grid.appendChild(buildProjectCard(project));
+    const albumTrack = createEl("div", "projects-album-track");
+    albumTrack.setAttribute("role", "group");
+    albumTrack.setAttribute("aria-label", "Álbum de proyectos");
+
+    const stagePanel = createEl("article", "project-stage");
+    stagePanel.id = "project-detail-panel";
+    stagePanel.setAttribute("tabindex", "-1");
+    stagePanel.hidden = true;
+
+    const cards = projects.map(function (project, index) {
+      return buildAlbumCard(project, index);
     });
 
-    container.appendChild(grid);
+    function closeProjectDetail(restoreFocus) {
+      const previousIndex = activeIndex;
+      activeIndex = -1;
+      cards.forEach(function (card) {
+        card.classList.remove("is-selected");
+        card.setAttribute("aria-expanded", "false");
+      });
+      stagePanel.hidden = true;
+      stagePanel.innerHTML = "";
+
+      if (restoreFocus && previousIndex >= 0 && cards[previousIndex]) {
+        cards[previousIndex].focus();
+      }
+    }
+
+    function openProjectDetail(index) {
+      if (activeIndex === index && !stagePanel.hidden) {
+        closeProjectDetail(false);
+        return;
+      }
+
+      activeIndex = index;
+      cards.forEach(function (card, idx) {
+        const isCurrent = idx === activeIndex;
+        card.classList.toggle("is-selected", isCurrent);
+        card.setAttribute("aria-expanded", String(isCurrent));
+      });
+
+      renderProjectStage(stagePanel, projects[activeIndex], function () {
+        closeProjectDetail(true);
+      });
+      stagePanel.hidden = false;
+
+      const prefersReduced = app.reducedMotion.isPreferred();
+      stagePanel.scrollIntoView({
+        behavior: prefersReduced ? "auto" : "smooth",
+        block: "nearest"
+      });
+    }
+
+    cards.forEach(function (card, index) {
+      card.addEventListener("click", function () {
+        openProjectDetail(index);
+      });
+
+      card.addEventListener("keydown", function (event) {
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          cards[(index + 1) % cards.length].focus();
+        } else if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          cards[(index - 1 + cards.length) % cards.length].focus();
+        }
+      });
+
+      albumTrack.appendChild(card);
+    });
+
+    stagePanel.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !stagePanel.hidden) {
+        event.preventDefault();
+        closeProjectDetail(true);
+      }
+    });
+
+    showcase.appendChild(albumTrack);
+    showcase.appendChild(stagePanel);
+    container.appendChild(showcase);
   }
 
   /**
@@ -1344,8 +1258,8 @@
     const configuredPhrases =
       data && data.profile && Array.isArray(data.profile.roles)
         ? data.profile.roles.filter(function (phrase) {
-            return typeof phrase === "string" && phrase.trim().length > 0;
-          })
+          return typeof phrase === "string" && phrase.trim().length > 0;
+        })
         : [];
 
     const phrases = configuredPhrases.length > 0 ? configuredPhrases : defaultPhrases;
@@ -1369,9 +1283,7 @@
     const ERASE_STEP_MS = 12;
     const SWITCH_PAUSE_MS = 80;
 
-    const motionQuery = window.matchMedia
-      ? window.matchMedia("(prefers-reduced-motion: reduce)")
-      : null;
+    const motionQuery = app.reducedMotion.getQuery();
 
     let timerId = null;
     let isInView = true;
@@ -1510,25 +1422,17 @@
       }
     });
 
-    if (motionQuery) {
-      const onMotionChange = function () {
-        if (motionQuery.matches) {
-          showStaticRole();
-        } else {
-          phraseIndex = 0;
-          charIndex = phrases[0].length;
-          phase = "holding";
-          textEl.textContent = phrases[0];
-          resumeEffect();
-        }
-      };
-
-      if (typeof motionQuery.addEventListener === "function") {
-        motionQuery.addEventListener("change", onMotionChange);
-      } else if (typeof motionQuery.addListener === "function") {
-        motionQuery.addListener(onMotionChange);
+    app.reducedMotion.onChange(motionQuery, function () {
+      if (motionQuery && motionQuery.matches) {
+        showStaticRole();
+      } else {
+        phraseIndex = 0;
+        charIndex = phrases[0].length;
+        phase = "holding";
+        textEl.textContent = phrases[0];
+        resumeEffect();
       }
-    }
+    });
 
     roleEl.classList.add("is-typewriter-active");
     textEl.textContent = phrases[0];
@@ -1555,9 +1459,7 @@
       return;
     }
 
-    const motionQuery = window.matchMedia
-      ? window.matchMedia("(prefers-reduced-motion: reduce)")
-      : null;
+    const motionQuery = app.reducedMotion.getQuery();
 
     const flakeConfigs = [
       { left: 2, size: 5, opacity: 0.52, duration: 28, delay: -6, driftA: 34, driftB: 16, driftC: 58, color: "var(--text-secondary)" },
@@ -1634,13 +1536,7 @@
 
     document.addEventListener("visibilitychange", syncSnowState);
 
-    if (motionQuery) {
-      if (typeof motionQuery.addEventListener === "function") {
-        motionQuery.addEventListener("change", syncSnowState);
-      } else if (typeof motionQuery.addListener === "function") {
-        motionQuery.addListener(syncSnowState);
-      }
-    }
+    app.reducedMotion.onChange(motionQuery, syncSnowState);
 
     syncSnowState();
   }
@@ -1652,10 +1548,9 @@
     initThemeToggle();
     initMobileMenu();
     initActiveSectionIndicator();
-    initProjectModal();
     initFooterYear();
 
-    const data = getPortfolioData();
+    const data = app.getData();
     initHeroTypewriter(data);
     initHeroSnow();
     initHeroMedia(data);
@@ -1670,4 +1565,4 @@
   }
 
   document.addEventListener("DOMContentLoaded", initPortfolio);
-})();
+}) ();
