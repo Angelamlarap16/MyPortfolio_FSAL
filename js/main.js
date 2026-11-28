@@ -1323,6 +1323,227 @@
   }
 
   /**
+   * Anima las frases del título profesional con efecto de máquina de escribir,
+   * mostrando la frase principal al cargar y respetando accesibilidad, rendimiento y movimiento reducido.
+   * @param {object|null} data
+   */
+  function initHeroTypewriter(data) {
+    const roleEl = document.getElementById("hero-role");
+    const textEl = document.getElementById("hero-role-text");
+
+    if (!roleEl || !textEl) {
+      return;
+    }
+
+    const defaultPhrases = [
+      "Java Full Stack Developer",
+      "Desarrollo Web & Diseño Responsivo",
+      "Gestión de Bases de Datos y Backend"
+    ];
+
+    const configuredPhrases =
+      data && data.profile && Array.isArray(data.profile.roles)
+        ? data.profile.roles.filter(function (phrase) {
+            return typeof phrase === "string" && phrase.trim().length > 0;
+          })
+        : [];
+
+    const phrases = configuredPhrases.length > 0 ? configuredPhrases : defaultPhrases;
+    const staticPhrase =
+      (data && data.profile && data.profile.role) || phrases[0] || textEl.textContent.trim();
+
+    const srEl = roleEl.querySelector("[data-hero-role-sr]");
+    const ghostEl = roleEl.querySelector("[data-hero-role-ghost]");
+    if (srEl) {
+      srEl.textContent = staticPhrase;
+    }
+    if (ghostEl) {
+      const longestPhrase = phrases.reduce(function (longest, current) {
+        return current.length > longest.length ? current : longest;
+      }, staticPhrase);
+      ghostEl.textContent = longestPhrase;
+    }
+
+    const HOLD_DURATION_MS = 1000;
+    const TYPE_STEP_MS = 32;
+    const ERASE_STEP_MS = 12;
+    const SWITCH_PAUSE_MS = 80;
+
+    const motionQuery = window.matchMedia
+      ? window.matchMedia("(prefers-reduced-motion: reduce)")
+      : null;
+
+    let timerId = null;
+    let isInView = true;
+    let isPaused = false;
+    let phraseIndex = 0;
+    let charIndex = phrases[0].length;
+    let phase = "holding";
+
+    function clearTimer() {
+      if (timerId !== null) {
+        window.clearTimeout(timerId);
+        timerId = null;
+      }
+    }
+
+    function scheduleNext(delayMs) {
+      clearTimer();
+      timerId = window.setTimeout(runStep, delayMs);
+    }
+
+    function showStaticRole() {
+      clearTimer();
+      roleEl.classList.remove("is-typewriter-active", "is-typewriter-paused");
+      textEl.textContent = staticPhrase;
+    }
+
+    function shouldAnimate() {
+      if (motionQuery && motionQuery.matches) {
+        return false;
+      }
+      if (document.hidden || !isInView) {
+        return false;
+      }
+      return true;
+    }
+
+    function pauseEffect() {
+      if (isPaused) {
+        return;
+      }
+      isPaused = true;
+      clearTimer();
+      roleEl.classList.add("is-typewriter-paused");
+      const currentPhrase = phrases[phraseIndex] || staticPhrase;
+      textEl.textContent = currentPhrase;
+      charIndex = currentPhrase.length;
+      phase = "holding";
+    }
+
+    function resumeEffect() {
+      if (motionQuery && motionQuery.matches) {
+        showStaticRole();
+        return;
+      }
+      if (document.hidden || !isInView || phrases.length < 2) {
+        return;
+      }
+
+      isPaused = false;
+      roleEl.classList.add("is-typewriter-active");
+      roleEl.classList.remove("is-typewriter-paused");
+      scheduleNext(HOLD_DURATION_MS);
+    }
+
+    function runStep() {
+      if (!shouldAnimate()) {
+        if (motionQuery && motionQuery.matches) {
+          showStaticRole();
+        } else {
+          pauseEffect();
+        }
+        return;
+      }
+
+      const currentPhrase = phrases[phraseIndex];
+
+      if (phase === "holding") {
+        phase = "erasing";
+        scheduleNext(ERASE_STEP_MS);
+        return;
+      }
+
+      if (phase === "erasing") {
+        charIndex = Math.max(0, charIndex - 1);
+        textEl.textContent = currentPhrase.slice(0, charIndex);
+
+        if (charIndex === 0) {
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+          phase = "typing";
+          scheduleNext(SWITCH_PAUSE_MS);
+          return;
+        }
+        scheduleNext(ERASE_STEP_MS);
+        return;
+      }
+
+      if (phase === "typing") {
+        charIndex += 1;
+        textEl.textContent = currentPhrase.slice(0, charIndex);
+
+        if (charIndex >= currentPhrase.length) {
+          phase = "holding";
+          scheduleNext(HOLD_DURATION_MS);
+          return;
+        }
+        scheduleNext(TYPE_STEP_MS);
+      }
+    }
+
+    if (phrases.length < 2 || (motionQuery && motionQuery.matches)) {
+      showStaticRole();
+      return;
+    }
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        function (entries) {
+          const entry = entries[0];
+          isInView = Boolean(entry && entry.isIntersecting);
+          if (isInView) {
+            resumeEffect();
+          } else {
+            pauseEffect();
+          }
+        },
+        { threshold: 0.05 }
+      );
+      observer.observe(roleEl);
+    }
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        pauseEffect();
+      } else {
+        resumeEffect();
+      }
+    });
+
+    if (motionQuery) {
+      const onMotionChange = function () {
+        if (motionQuery.matches) {
+          showStaticRole();
+        } else {
+          phraseIndex = 0;
+          charIndex = phrases[0].length;
+          phase = "holding";
+          textEl.textContent = phrases[0];
+          resumeEffect();
+        }
+      };
+
+      if (typeof motionQuery.addEventListener === "function") {
+        motionQuery.addEventListener("change", onMotionChange);
+      } else if (typeof motionQuery.addListener === "function") {
+        motionQuery.addListener(onMotionChange);
+      }
+    }
+
+    roleEl.classList.add("is-typewriter-active");
+    textEl.textContent = phrases[0];
+    phraseIndex = 0;
+    charIndex = phrases[0].length;
+    phase = "holding";
+
+    if (!document.hidden) {
+      scheduleNext(HOLD_DURATION_MS);
+    } else {
+      pauseEffect();
+    }
+  }
+
+  /**
    * Punto de entrada para inicializar la interfaz del portafolio.
    */
   function initPortfolio() {
@@ -1333,6 +1554,7 @@
     initFooterYear();
 
     const data = getPortfolioData();
+    initHeroTypewriter(data);
     initHeroMedia(data);
     renderProjects(data);
     renderAbout(data);

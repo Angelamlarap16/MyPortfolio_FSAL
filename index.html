@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet">
 
   <!-- Hoja de estilos principal -->
@@ -87,7 +87,13 @@
         <article class="hero-card">
           <p class="tag tag-sage hero-pill">Java Full Stack</p>
           <h1 id="hero-title" class="hero-title">Angela María Lara Picón</h1>
-          <p class="hero-role">Desarrolladora Java Full Stack</p>
+          <p id="hero-role" class="hero-role">
+            <span class="sr-only" data-hero-role-sr>Desarrolladora Java Full Stack</span>
+            <span class="hero-role-ghost" aria-hidden="true"><span data-hero-role-ghost>Gestión de Bases de Datos y Backend</span><span class="hero-cursor hero-cursor-ghost"></span></span>
+            <span class="hero-role-live" aria-hidden="true">
+              <span id="hero-role-text">Desarrolladora Java Full Stack</span><span class="hero-cursor"></span>
+            </span>
+          </p>
           <p class="hero-summary">
             Desarrollo proyectos web con HTML, CSS, JavaScript, Java, Spring Boot y MySQL durante mi formación en
             Generation. Aporto experiencia profesional en revisión de calidad, documentación y trabajo colaborativo,

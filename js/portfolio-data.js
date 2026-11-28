@@ -9,6 +9,12 @@ window.PORTFOLIO_DATA = {
     displayName: "Angela Lara",
     initials: "AL",
     role: "Desarrolladora Java Full Stack",
+    // Frases rotativas del título profesional en portada (fáciles de editar)
+    roles: [
+      "Java Full Stack Developer",
+      "Desarrollo Web & Diseño Responsivo",
+      "Gestión de Bases de Datos y Backend"
+    ],
     location: "Bogotá, Colombia",
     summary:
       "Desarrollo proyectos web con HTML, CSS, JavaScript, Java, Spring Boot y MySQL durante mi formación en Generation. Aporto experiencia profesional en revisión de calidad, documentación y trabajo colaborativo, con especial interés en el desarrollo web responsivo.",

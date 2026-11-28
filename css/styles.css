@@ -52,6 +52,7 @@
   /* Tipografía */
   --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
   --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* Espaciado */
   --space-2xs: 0.25rem;
@@ -158,6 +159,19 @@ button {
   outline: 2px solid var(--accent-link);
   outline-offset: 3px;
   border-radius: 4px;
+}
+
+/* Texto accesible solo para lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Enlace para saltar al contenido principal */
@@ -453,11 +467,54 @@ h3 {
 }
 
 .hero-role {
+  display: grid;
+  align-items: start;
   margin: 0 0 var(--space-md);
-  font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+  font-family: var(--mono);
+  font-size: clamp(1.02rem, 1.8vw, 1.32rem);
   color: var(--accent-link);
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.4;
+}
+
+.hero-role-ghost,
+.hero-role-live {
+  grid-area: 1 / 1;
+}
+
+.hero-role-ghost {
+  visibility: hidden;
+  user-select: none;
+  pointer-events: none;
+}
+
+.hero-cursor {
+  display: none;
+  width: 0.62em;
+  height: 0.14em;
+  margin-left: 0.08em;
+  vertical-align: -0.04em;
+  border-radius: 1px;
+  background-color: var(--accent-secondary);
+}
+
+.hero-role-ghost .hero-cursor-ghost {
+  display: inline-block;
+}
+
+.hero-role.is-typewriter-active .hero-cursor {
+  display: inline-block;
+  animation: hero-cursor-blink 0.95s steps(1) infinite;
+}
+
+.hero-role.is-typewriter-paused .hero-cursor {
+  animation: none;
+}
+
+@keyframes hero-cursor-blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .hero-summary {
@@ -1370,6 +1427,11 @@ body.modal-open {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+
+  .hero-role.is-typewriter-active .hero-cursor {
+    display: none;
+    animation: none;
+  }
 }
 
 /* Alternativa imprimible para hoja de vida */
@@ -1389,7 +1451,8 @@ body.modal-open {
   .site-header,
   #contenido-principal,
   .site-footer,
-  .modal-backdrop {
+  .modal-backdrop,
+  .hero-cursor {
     display: none !important;
   }
 
