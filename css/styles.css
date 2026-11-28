@@ -1,32 +1,53 @@
 /* ==========================================================================
    Sistema visual del portafolio profesional de Angela Lara
-   Identidad: grafito cálido, marfil, naranja suave y verde salvia
+   Identidad: gama púrpura luminosa sin negro y acento propio en coral cálido
    ========================================================================== */
 
 :root {
-  /* Paleta oscura por defecto */
-  --bg-primary: #161A18;
-  --bg-alt: #1B211E;
-  --bg-card: #242C27;
-  --bg-elevated: #2C3630;
-  --header-bg: rgba(22, 26, 24, 0.92);
+  /* Paleta base oscura (6 roles) */
+  --palette-bg: #1B1038;
+  --palette-bg-rgb: 27, 16, 56;
+  --palette-surface: #26184B;
+  --palette-surface-rgb: 38, 24, 75;
+  --palette-text: #FAF7FF;
+  --palette-text-rgb: 250, 247, 255;
+  --palette-text-muted: #D5C8F5;
+  --palette-text-muted-rgb: 213, 200, 245;
+  --palette-accent: #8338EC;
+  --palette-accent-rgb: 131, 56, 236;
+  --palette-accent-own: #FF9F68;
+  --palette-accent-own-rgb: 255, 159, 104;
 
-  --text-primary: #F5F1E8;
-  --text-secondary: #BEC5BC;
+  /* Variables semánticas derivadas de los 6 colores base */
+  --bg-primary: var(--palette-bg);
+  --bg-alt: color-mix(in srgb, var(--palette-surface) 52%, var(--palette-bg));
+  --bg-card: var(--palette-surface);
+  --bg-elevated: color-mix(in srgb, var(--palette-surface) 88%, var(--palette-text));
+  --header-bg: rgba(var(--palette-bg-rgb), 0.9);
+  --backdrop-bg: rgba(var(--palette-bg-rgb), 0.78);
 
-  --accent-primary: #F0AA72;
-  --accent-primary-hover: #F6BB8D;
-  --accent-secondary: #A8C6AE;
-  --text-on-accent: #161A18;
+  --text-primary: var(--palette-text);
+  --text-secondary: var(--palette-text-muted);
 
-  --border-neutral: #3B473F;
-  --border-accent-soft: rgba(240, 170, 114, 0.35);
-  --border-sage-soft: rgba(168, 198, 174, 0.35);
+  --accent-primary: var(--palette-accent);
+  --accent-primary-hover: color-mix(in srgb, var(--palette-accent) 84%, var(--palette-bg));
+  --accent-link: color-mix(in srgb, var(--palette-accent) 46%, var(--palette-text));
+  --accent-link-hover: var(--palette-text);
+  --accent-secondary: var(--palette-accent-own);
+  --text-on-accent: var(--palette-text);
 
-  /* Sombras de baja intensidad */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.22);
-  --shadow-md: 0 10px 26px rgba(0, 0, 0, 0.28);
-  --shadow-elevated: 0 16px 36px rgba(0, 0, 0, 0.38);
+  --border-neutral: rgba(var(--palette-text-muted-rgb), 0.22);
+  --border-accent-soft: rgba(var(--palette-accent-rgb), 0.45);
+  --border-sage-soft: rgba(var(--palette-accent-own-rgb), 0.42);
+  --glow-primary: rgba(var(--palette-accent-rgb), 0.22);
+  --glow-own: rgba(var(--palette-accent-own-rgb), 0.16);
+  --glow-card-primary: rgba(var(--palette-accent-rgb), 0.16);
+  --glow-card-own: rgba(var(--palette-accent-own-rgb), 0.12);
+
+  /* Sombras derivadas del acento violeta (sin negro) */
+  --shadow-sm: 0 2px 10px rgba(var(--palette-accent-rgb), 0.14);
+  --shadow-md: 0 10px 26px rgba(var(--palette-accent-rgb), 0.2);
+  --shadow-elevated: 0 18px 42px rgba(var(--palette-accent-rgb), 0.28);
 
   /* Tipografía */
   --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
@@ -51,29 +72,42 @@
   --transition-fast: 180ms ease;
 }
 
-/* Paleta clara opcional */
-[data-theme="light"] {
-  --bg-primary: #F7F4ED;
-  --bg-alt: #EEEEE5;
-  --bg-card: #FFFFFF;
-  --bg-elevated: #FFFFFF;
-  --header-bg: rgba(247, 244, 237, 0.92);
+/* Paleta base clara (mismos 6 roles) */
+:root[data-theme="light"] {
+  --palette-bg: #F5F0FF;
+  --palette-bg-rgb: 245, 240, 255;
+  --palette-surface: #FFFFFF;
+  --palette-surface-rgb: 255, 255, 255;
+  --palette-text: #241242;
+  --palette-text-rgb: 36, 18, 66;
+  --palette-text-muted: #56407A;
+  --palette-text-muted-rgb: 86, 64, 122;
+  --palette-accent: #6D28D9;
+  --palette-accent-rgb: 109, 40, 217;
+  --palette-accent-own: #B83B14;
+  --palette-accent-own-rgb: 184, 59, 20;
 
-  --text-primary: #202A23;
-  --text-secondary: #526056;
+  --bg-alt: color-mix(in srgb, var(--palette-surface) 45%, var(--palette-bg));
+  --bg-elevated: var(--palette-surface);
+  --header-bg: rgba(var(--palette-bg-rgb), 0.92);
+  --backdrop-bg: rgba(var(--palette-text-rgb), 0.45);
 
-  --accent-primary: #9C461C;
-  --accent-primary-hover: #823915;
-  --accent-secondary: #396346;
-  --text-on-accent: #FFFFFF;
+  --accent-primary-hover: color-mix(in srgb, var(--palette-accent) 84%, var(--palette-text));
+  --accent-link: var(--palette-accent);
+  --accent-link-hover: var(--accent-primary-hover);
+  --text-on-accent: var(--palette-surface);
 
-  --border-neutral: #D6DDD3;
-  --border-accent-soft: rgba(156, 70, 28, 0.28);
-  --border-sage-soft: rgba(57, 99, 70, 0.28);
+  --border-neutral: rgba(var(--palette-text-rgb), 0.16);
+  --border-accent-soft: rgba(var(--palette-accent-rgb), 0.34);
+  --border-sage-soft: rgba(var(--palette-accent-own-rgb), 0.34);
+  --glow-primary: rgba(var(--palette-accent-rgb), 0.1);
+  --glow-own: rgba(var(--palette-accent-own-rgb), 0.09);
+  --glow-card-primary: rgba(var(--palette-accent-rgb), 0.08);
+  --glow-card-own: rgba(var(--palette-accent-own-rgb), 0.07);
 
-  --shadow-sm: 0 2px 8px rgba(32, 42, 35, 0.06);
-  --shadow-md: 0 10px 24px rgba(32, 42, 35, 0.08);
-  --shadow-elevated: 0 16px 34px rgba(32, 42, 35, 0.12);
+  --shadow-sm: 0 2px 8px rgba(var(--palette-text-rgb), 0.07);
+  --shadow-md: 0 10px 24px rgba(var(--palette-text-rgb), 0.1);
+  --shadow-elevated: 0 18px 38px rgba(var(--palette-text-rgb), 0.16);
 }
 
 /* Reinicio básico y desplazamiento controlado */
@@ -105,14 +139,14 @@ img {
 }
 
 a {
-  color: var(--accent-primary);
+  color: var(--accent-link);
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
   transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--accent-primary-hover);
+  color: var(--accent-link-hover);
 }
 
 button {
@@ -121,7 +155,7 @@ button {
 
 /* Foco visible para navegación por teclado */
 :focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid var(--accent-link);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -194,7 +228,7 @@ button {
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-accent-soft);
   background-color: var(--bg-card);
-  color: var(--accent-primary);
+  color: var(--accent-link);
   font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 700;
@@ -421,7 +455,7 @@ h3 {
 .hero-role {
   margin: 0 0 var(--space-md);
   font-size: clamp(1.2rem, 2.2vw, 1.55rem);
-  color: var(--accent-primary);
+  color: var(--accent-link);
   font-weight: 700;
   line-height: 1.3;
 }
@@ -485,20 +519,14 @@ h3 {
   overflow: hidden;
 }
 
-/* Iluminación ambiental naranja y salvia de baja intensidad */
+/* Iluminación ambiental derivada de los acentos de la paleta */
 .hero-ambient {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 82% 18%, rgba(240, 170, 114, 0.14), transparent 52%),
-    radial-gradient(circle at 18% 82%, rgba(168, 198, 174, 0.14), transparent 52%);
-}
-
-[data-theme="light"] .hero-ambient {
-  background:
-    radial-gradient(circle at 82% 18%, rgba(156, 70, 28, 0.08), transparent 52%),
-    radial-gradient(circle at 18% 82%, rgba(57, 99, 70, 0.09), transparent 52%);
+    radial-gradient(circle at 82% 18%, var(--glow-primary), transparent 52%),
+    radial-gradient(circle at 18% 82%, var(--glow-own), transparent 52%);
 }
 
 .hero-monogram {
@@ -650,7 +678,7 @@ h3 {
 }
 
 .tag-accent {
-  color: var(--accent-primary);
+  color: var(--accent-link);
   border-color: var(--border-accent-soft);
 }
 
@@ -701,14 +729,8 @@ h3 {
   padding: var(--space-md);
   color: var(--accent-secondary);
   background:
-    radial-gradient(circle at 85% 20%, rgba(240, 170, 114, 0.1), transparent 55%),
-    radial-gradient(circle at 15% 85%, rgba(168, 198, 174, 0.1), transparent 55%);
-}
-
-[data-theme="light"] .project-concept {
-  background:
-    radial-gradient(circle at 85% 20%, rgba(156, 70, 28, 0.06), transparent 55%),
-    radial-gradient(circle at 15% 85%, rgba(57, 99, 70, 0.07), transparent 55%);
+    radial-gradient(circle at 85% 20%, var(--glow-card-primary), transparent 55%),
+    radial-gradient(circle at 15% 85%, var(--glow-card-own), transparent 55%);
 }
 
 .project-concept-svg {
@@ -823,12 +845,8 @@ body.modal-open {
   display: grid;
   place-items: center;
   padding: var(--space-md);
-  background-color: rgba(12, 15, 13, 0.72);
+  background-color: var(--backdrop-bg);
   backdrop-filter: blur(4px);
-}
-
-[data-theme="light"] .modal-backdrop {
-  background-color: rgba(32, 42, 35, 0.45);
 }
 
 .modal-dialog {
@@ -1247,20 +1265,20 @@ body.modal-open {
   display: none;
 }
 
-/* Pie de página grafito con ondas SVG discretas */
+/* Pie de página derivado de la paleta con ondas SVG discretas */
 .site-footer {
   position: relative;
-  background-color: #161A18;
-  color: #BEC5BC;
+  background-color: var(--bg-alt);
+  color: var(--text-secondary);
   font-size: 0.9rem;
-  border-top: 1px solid #3B473F;
+  border-top: 1px solid var(--border-neutral);
   overflow: hidden;
 }
 
 .footer-waves {
   width: 100%;
   height: 44px;
-  color: #242C27;
+  color: var(--bg-card);
   line-height: 0;
 }
 
@@ -1284,7 +1302,7 @@ body.modal-open {
 }
 
 .footer-note {
-  color: #A8C6AE;
+  color: var(--accent-secondary);
   font-weight: 500;
 }
 
@@ -1292,6 +1310,7 @@ body.modal-open {
    Navegación móvil
    ========================================================================== */
 @media (max-width: 860px) {
+
   .contact-grid,
   .about-highlights {
     grid-template-columns: 1fr;

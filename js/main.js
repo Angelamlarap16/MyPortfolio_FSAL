@@ -64,7 +64,11 @@
 
     const themeMeta = document.querySelector('meta[name="theme-color"]');
     if (themeMeta) {
-      themeMeta.setAttribute("content", isLight ? "#F7F4ED" : "#161A18");
+      const computedBg = window
+        .getComputedStyle(document.documentElement)
+        .getPropertyValue("--palette-bg")
+        .trim();
+      themeMeta.setAttribute("content", computedBg || (isLight ? "#F5F0FF" : "#1B1038"));
     }
 
     if (!toggleButton) {
@@ -271,26 +275,26 @@
         '<rect x="28" y="28" width="44" height="28" rx="4" stroke="currentColor" stroke-opacity="0.45"/>' +
         '<rect x="82" y="28" width="44" height="28" rx="4" stroke="currentColor" stroke-opacity="0.45"/>' +
         '<rect x="28" y="66" width="98" height="24" rx="4" stroke="currentColor" stroke-opacity="0.25"/>' +
-        '<rect x="152" y="16" width="72" height="88" rx="8" stroke="#F0AA72" stroke-opacity="0.55" stroke-width="1.4"/>' +
-        '<line x1="164" y1="36" x2="212" y2="36" stroke="#F0AA72" stroke-opacity="0.6" stroke-width="2"/>' +
+        '<rect x="152" y="16" width="72" height="88" rx="8" stroke="var(--accent-link)" stroke-opacity="0.65" stroke-width="1.4"/>' +
+        '<line x1="164" y1="36" x2="212" y2="36" stroke="var(--accent-link)" stroke-opacity="0.7" stroke-width="2"/>' +
         '<line x1="164" y1="54" x2="202" y2="54" stroke="currentColor" stroke-opacity="0.35" stroke-width="2"/>' +
         '<line x1="164" y1="70" x2="196" y2="70" stroke="currentColor" stroke-opacity="0.35" stroke-width="2"/>' +
-        '<rect x="164" y="82" width="48" height="12" rx="4" fill="#F0AA72" fill-opacity="0.35"/>' +
+        '<rect x="164" y="82" width="48" height="12" rx="4" fill="var(--accent-link)" fill-opacity="0.35"/>' +
         "</svg>",
       "pet-task-planner":
         '<svg class="project-concept-svg" viewBox="0 0 240 120" fill="none" aria-hidden="true">' +
         '<rect x="16" y="18" width="64" height="84" rx="7" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.4"/>' +
-        '<rect x="88" y="18" width="64" height="84" rx="7" stroke="#F0AA72" stroke-opacity="0.45" stroke-width="1.4"/>' +
+        '<rect x="88" y="18" width="64" height="84" rx="7" stroke="var(--accent-link)" stroke-opacity="0.55" stroke-width="1.4"/>' +
         '<rect x="160" y="18" width="64" height="84" rx="7" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.4"/>' +
         '<rect x="24" y="34" width="48" height="18" rx="4" stroke="currentColor" stroke-opacity="0.4"/>' +
         '<rect x="24" y="60" width="48" height="18" rx="4" stroke="currentColor" stroke-opacity="0.25"/>' +
-        '<rect x="96" y="34" width="48" height="22" rx="4" stroke="#F0AA72" stroke-opacity="0.55"/>' +
+        '<rect x="96" y="34" width="48" height="22" rx="4" stroke="var(--accent-link)" stroke-opacity="0.65"/>' +
         '<path d="M172 44l6 6 12-12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
         '<path d="M172 72l6 6 12-12" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
         "</svg>",
       "agenda-telefonica-mvc":
         '<svg class="project-concept-svg" viewBox="0 0 240 120" fill="none" aria-hidden="true">' +
-        '<rect x="20" y="20" width="56" height="32" rx="6" stroke="#F0AA72" stroke-opacity="0.55" stroke-width="1.4"/>' +
+        '<rect x="20" y="20" width="56" height="32" rx="6" stroke="var(--accent-link)" stroke-opacity="0.65" stroke-width="1.4"/>' +
         '<rect x="92" y="20" width="56" height="32" rx="6" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.4"/>' +
         '<rect x="164" y="20" width="56" height="32" rx="6" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.4"/>' +
         '<line x1="76" y1="36" x2="92" y2="36" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.4"/>' +
@@ -308,9 +312,9 @@
         '<circle cx="48" cy="64" r="8" stroke="currentColor" stroke-width="1.6"/>' +
         '<path d="M44 64l3 3 5-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
         '<line x1="68" y1="64" x2="188" y2="64" stroke="currentColor" stroke-opacity="0.45" stroke-width="2"/>' +
-        '<circle cx="48" cy="86" r="8" stroke="#F0AA72" stroke-width="1.6"/>' +
-        '<path d="M48 82v5M48 90h.01" stroke="#F0AA72" stroke-width="1.8" stroke-linecap="round"/>' +
-        '<line x1="68" y1="86" x2="152" y2="86" stroke="#F0AA72" stroke-opacity="0.6" stroke-width="2"/>' +
+        '<circle cx="48" cy="86" r="8" stroke="var(--accent-link)" stroke-width="1.6"/>' +
+        '<path d="M48 82v5M48 90h.01" stroke="var(--accent-link)" stroke-width="1.8" stroke-linecap="round"/>' +
+        '<line x1="68" y1="86" x2="152" y2="86" stroke="var(--accent-link)" stroke-opacity="0.7" stroke-width="2"/>' +
         "</svg>"
     };
 
